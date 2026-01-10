@@ -1,0 +1,32 @@
+@charset "UTF-8";
+
+.error404 {
+    display: flex;
+    place-items: center;
+    place-content: center;
+    max-width: 1000px;
+    margin: 0 auto;
+    min-height: calc(100vh - 127px);
+}
+
+.error404 img {
+    width: 90%;
+    margin: 0 auto 60px auto;
+}
+
+.error404 p {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 36px;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {
+    .error404 p {
+        font-size: 18px;
+    }
+}

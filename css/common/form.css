@@ -1,0 +1,88 @@
+@charset "UTF-8";
+
+.c-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.c-form__item {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    margin: 0 0 10px 0;
+    padding: 0 20px;
+    border: 1px solid var(--borderColor);
+    flex: 0 0 auto;
+}
+
+.c-form__item.two {
+    width: calc(50% - 10px);
+}
+
+.c-form__item__title {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    flex: 0 0 auto;
+}
+
+.c-form__item.wrap {
+    flex-wrap: wrap;
+}
+
+.c-form__item.wrap .c-form__item__title {
+    margin: 0 0 .25em 0;
+}
+
+/****檔案上傳****/
+.c-form__upload {
+    display: block;
+    width: 100%;
+    margin: 0 0 30px 0;
+}
+
+.c-form__upload__box {
+    display: block;
+    width: 100%;
+    padding: 20px 0;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {
+    .c-form__item.two {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 575px) {
+
+    /****檔案上傳****/
+    .c-form__upload {
+        margin: 0;
+    }
+
+    .c-form__upload__box {
+        padding: 10px 0;
+    }
+}
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

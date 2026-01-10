@@ -1,0 +1,45 @@
+@charset "UTF-8";
+
+.message {
+    display: block;
+    padding: 150px 0;
+    min-height: calc(100vh - 500px);
+}
+
+.message__text {
+    display: block;
+    width: 100%;
+    font-size: 36px;
+    line-height: 1.5;
+    color: var(--mainColor);
+    font-family: 'NotoSansTC-M';
+    text-align: center;
+}
+
+.message__bt {
+    max-width: 190px;
+    margin: 30px auto 0 auto;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {
+    .message__text {
+        font-size: 18px;
+    }
+}
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

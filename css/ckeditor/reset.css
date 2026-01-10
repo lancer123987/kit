@@ -1,0 +1,93 @@
+@charset "UTF-8";
+
+:root {
+    --screenHeight: 100vh;
+    --mainColor: #1c2e6c;
+    --titleColor: #101939;
+    --textColor: #101939cc;
+    --noticeColor: #ff0000;
+    --borderColor: #10193933;
+    --gradient: linear-gradient(135deg, #5dc4ee, #153793, #5dc4ee, #153793, #5dc4ee) top left / 400% 400% no-repeat;
+    --gradientHorizon: linear-gradient(to right, #5dc4ee, #153793, #5dc4ee, #153793, #5dc4ee) top left / 400% 100% no-repeat;
+}
+
+* {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    -webkit-tap-highlight-color: transparent;
+}
+
+*:not(svg):not(text):not(tspan) {
+    letter-spacing: .05em;
+}
+
+body {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    font-family: 'Montserrat-M', 'NotoSansTC-M', 'Microsoft JhengHei', 'PingFang', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    box-sizing: border-box;
+}
+
+ul,
+ol {
+    margin: 0;
+    list-style-type: none;
+}
+
+a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+strong {
+    font-weight: 700;
+}
+
+i,
+em {
+    font-style: italic;
+}
+
+iframe {
+    border: none;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {}
+
+
+/****是否支援動態螢幕高****/
+@supports (height: 100dvh) {
+    :root {
+        --screenHeight: 100dvh
+    }
+}
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

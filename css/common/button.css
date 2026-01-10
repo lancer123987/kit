@@ -1,0 +1,137 @@
+@charset "UTF-8";
+
+/**按鈕樣式**/
+[class^="c-bt"] {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+    padding: 10px 20px;
+    font-size: 15px;
+    line-height: 1;
+    color: #fff;
+    font-family: 'NotoSansTC';
+    background: #1b1b1b;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+    transition: opacity .4s ease-in-out;
+    overflow: hidden;
+}
+
+[class^="c-bt"] input[type="submit"],
+[class^="c-bt"] input[type="reset"],
+[class^="c-bt"] button,
+[class^="c-bt"] span {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    font-family: inherit;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+[class^="c-bt"] input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+[class^="c-bt"] button {
+    width: 100%;
+    text-align: center;
+}
+
+/**more樣式**/
+[class^="c-bt"][class*="-more"] {
+    padding: 15.5px 20px;
+}
+
+/****processing****/
+[class^="c-bt"].processing {
+    pointer-events: none;
+}
+
+/****關閉鈕*****/
+.c-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    width: 80px;
+    height: 80px;
+    background: var(--mainColor);
+    cursor: pointer;
+    transition: opacity .4s ease-in-out;
+    cursor: pointer;
+}
+
+.c-close::before,
+.c-close::after {
+    content: '';
+    position: absolute;
+    top: calc(50% - .5px);
+    left: 25%;
+    display: block;
+    width: 50%;
+    height: 1px;
+    background: #fff;
+    transform-origin: center;
+}
+
+.c-close::before {
+    transform: rotate(45deg);
+}
+
+.c-close::after {
+    transform: rotate(-45deg);
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {
+
+    /****關閉鈕*****/
+    .c-close {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {
+    [class^="c-bt"]:hover {
+        opacity: .7;
+    }
+
+    /****關閉鈕*****/
+    .c-close:hover {
+        opacity: .7;
+    }
+
+}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

@@ -1,0 +1,65 @@
+@charset "UTF-8";
+
+/****導行列****/
+.crumb {
+    display: block;
+    width: 100%;
+}
+
+.crumb ol {
+    display: block;
+    width: 100%;
+}
+
+.crumb ol li {
+    display: inline;
+}
+
+.crumb ol li::after {
+    content: '';
+    position: relative;
+    display: inline-block;
+    width: 5px;
+    height: 10px;
+    margin: 0 15px;
+    background: url(../../images/common/icon_arrow_next.svg) center/contain no-repeat;
+}
+
+.crumb ol li:last-child:after {
+    display: none;
+}
+
+.crumb ol li a {
+    transition: opacity .4s ease-in-out;
+}
+
+.crumb ol li a:hover {
+    opacity: .7;
+}
+
+/****針對圖片顯示階層處理樣式****/
+.crumb__pic span {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {}
+
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

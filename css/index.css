@@ -1,0 +1,73 @@
+@charset "UTF-8";
+
+/****banner****/
+.banner {
+    display: block;
+    width: 100%;
+    height: var(--screenHeight);
+}
+
+.banner__box .slick-list,
+.banner__box .slick-track {
+    height: 100%;
+}
+
+.banner__box {
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+}
+
+.banner__box__item {
+    display: block;
+    width: 100%;
+    height: 100%;
+    flex: 0 0 auto;
+}
+
+/**背景**/
+.banner__box__item__bg {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.banner__box__item__bg img,
+.banner__box__item__bg video {
+    object-fit: cover;
+    object-position: center;
+    height: 100%;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {
+
+    /****banner****/
+    .banner {
+        min-height: 500px;
+    }
+}
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

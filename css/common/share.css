@@ -1,0 +1,101 @@
+@charset "UTF-8";
+
+.c-share {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.c-share__title {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--titleColor);
+    flex: 0 0 auto;
+}
+
+.c-share__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    flex: 0 1 auto;
+}
+
+.c-share__list__item {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+    transition: opacity .4s ease-in-out;
+}
+
+.c-share__list__item:hover {
+    opacity: .7;
+}
+
+.c-share__list__item img {
+    object-fit: contain;
+    object-position: center;
+    height: 100%;
+}
+
+/****複製連結用輸入框****/
+.c-share__list__item__textarea {
+    position: fixed;
+    top: -100vh;
+    left: -100vw;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/****原生分享樣式****/
+.c-share__list__item.j-share-bt {
+    display: none;
+    width: auto;
+    padding: 0 0 0 30px;
+    background: url(../../images/common/icon_share_gray.svg) left center no-repeat;
+    background-size: 20px auto;
+}
+
+.c-share.native .c-share__title {
+    display: none;
+}
+
+.c-share.native .c-share__list__item {
+    display: none;
+}
+
+.c-share.native .c-share__list__item.j-share-bt {
+    display: flex;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {}
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

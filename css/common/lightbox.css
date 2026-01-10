@@ -1,0 +1,147 @@
+@charset "UTF-8";
+
+/****c-lightbox****/
+.c-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    padding: 80px 0;
+    background: rgba(0, 0, 0, .7);
+    overscroll-behavior: none;
+    touch-action: auto;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity .4s ease-in-out;
+    -webkit-overflow-scrolling: touch;
+    z-index: 1000;
+}
+
+.c-lightbox.active {
+    opacity: 1;
+    pointer-events: all;
+    visibility: visible;
+}
+
+.c-lightbox__inner {
+    display: block;
+    width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.c-lightbox__inner::-webkit-scrollbar {
+    width: 0;
+}
+
+.c-lightbox__inner::-webkit-scrollbar-thumb {
+    background: var(--mainColor);
+}
+
+/****dialog****/
+.c-lightbox__inner__message {
+    display: block;
+    width: calc(100% - 120px);
+    max-width: 525px;
+    margin: 0 auto;
+    padding: 85px 20px 80px 20px;
+    text-align: center;
+    background: #fff;
+}
+
+.c-lightbox__inner__message__box {
+    display: block;
+    width: 100%;
+}
+
+.c-lightbox__inner__message__box__sub {
+    display: block;
+    width: 100%;
+    font-size: 15px;
+    line-height: 1;
+}
+
+.c-lightbox__inner__message__box__title {
+    display: block;
+    width: 100%;
+    font-size: 32px;
+    line-height: 1.2;
+}
+
+.c-lightbox__inner__message__box__text {
+    display: block;
+    width: 100%;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.c-lightbox__inner__message__box__btGroup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 30px auto 0 auto;
+}
+
+.c-lightbox__inner__message__box__btGroup__bt {
+    width: calc(50% - 10px);
+    max-width: 180px;
+    margin: 10px 5px 0 5px;
+}
+
+.c-lightbox__inner__message__box__btGroup__bt:first-child:last-child {
+    width: 100%;
+    margin: 10px 0 0 0;
+}
+
+@media screen and (max-width: 991px) {
+
+    /****dialog****/
+    .c-lightbox__inner__message {
+        width: calc(100% - 60px);
+    }
+
+}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {
+
+    /****dialog****/
+    .c-lightbox__inner__message {
+        width: calc(100% - 40px);
+    }
+
+    .c-lightbox__inner__message__box__btGroup {
+        margin: 20px auto 0 auto;
+    }
+}
+
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {
+    .c-lightbox__inner {
+        scrollbar-width: none;
+    }
+}

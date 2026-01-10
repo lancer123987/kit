@@ -1,0 +1,71 @@
+@charset "UTF-8";
+
+/****文字編輯器****/
+body {
+    color: var(--textColor);
+    word-break: break-all;
+}
+
+a {
+    color: #0000ff;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    transition: opacity .4s ease-in-out;
+}
+
+a:hover {
+    opacity: .7;
+}
+
+img {
+    display: inline-block;
+    width: auto;
+    max-width: 100%;
+    height: auto !important;
+}
+
+/****原生列表 start****/
+ul,
+ol {
+    margin: 0 0 0 1.5em;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ul li>ul {
+    list-style-type: circle;
+}
+
+ul li>ul li>ul,
+ul li>ul li>ul ul {
+    list-style-type: square;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+/****原生列表 end****/
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {
+
+    .body {}
+}
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}
