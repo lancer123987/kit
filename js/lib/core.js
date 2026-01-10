@@ -90,13 +90,20 @@ function isIOS() {
  * @return    {boolean}
  */
 function isMobileDevice() {
-    let mobileDevices = ['Android', 'webOS', 'iPhone', 'iPad', 'iPod', 'BlackBerry', 'Windows Phone'];
-    for (let i = 0; i < mobileDevices.length; i++) {
-        if (navigator.userAgent.match(mobileDevices[i])) {
-            return true;
-        }
-    }
-    return false
+    if (!touchSupport) return false;
+    const userAgent = navigator.userAgent;
+
+    /* 基礎行動裝置偵測 */
+    const mobileRegex = [/Android/i, /iPhone/i, /iPad/i, /iPod/i, /BlackBerry/i, /Windows Phone/i];
+    const isMobileUA = mobileRegex.some(device => device.test(userAgent));
+
+    /* 確認是否多點觸碰 */
+    const isIPad = (navigator.maxTouchPoints && navigator.maxTouchPoints > 1 && /Macintosh/i.test(userAgent));
+
+    /* 確認螢幕尺寸 */
+    const isSmallScreen = Math.min(screen.width, screen.height) < 1024;
+
+    return (isMobileUA || (isIPad && isSmallScreen));
 }
 
 
@@ -200,7 +207,7 @@ function setHash(key, value) {
     if (!cleanedKey) return false;
 
     /* 如果 value 是 null 或 undefined，則移除該 key */
-    if (value === null || value === undefined) {
+    if (null === value || undefined === value) {
         delete currentHash[cleanedKey];
     } else {
         /* 清理value，移除危險字元並編碼 */
@@ -241,7 +248,7 @@ function escapeHTML(str, maxLength = 5000) {
     const MAX_PREVIEW_LENGTH = 30;
 
     /* 空值處理 */
-    if (str == null) {
+    if (null == str) {
         devWarn('escapeHTML received null or undefined str');
         return '';
     }
@@ -250,7 +257,7 @@ function escapeHTML(str, maxLength = 5000) {
     const strType = typeof str;
 
     /* 非字串處理 */
-    if (strType !== 'string') {
+    if ('string' !== strType) {
         safeStr = String(str);
         const preview = safeStr.length > MAX_PREVIEW_LENGTH ?
             safeStr.substring(0, MAX_PREVIEW_LENGTH) + '...' :
@@ -318,7 +325,7 @@ const ResizeHandler = ((direction = 'x') => {
     /* 初始化方法 */
     const init = (customResizeEvent = defaultResizeEvent, debounceDelay = delayDefault) => {
         /* 防抖動功能是否存在 */
-        if (typeof debounce !== 'function') return devError('ResizeHandler: Required function "debounce" is missing.');
+        if ('function' !== typeof debounce) return devError('ResizeHandler: Required function "debounce" is missing.');
 
         const debouncedDefaultResizeEvent = debounce(defaultResizeEvent, debounceDelay);
         const debouncedCustomResizeEvent = debounce(customResizeEvent, debounceDelay);
@@ -420,41 +427,44 @@ function observeInfAnim() {
  *
  * @access    public
  *
- * @param     {number}  speed       滾動時長
+ * @param     {number}  speed       滾動時長(ms)
  *
  * @return    {void}
  */
 function scrollToTop(speed = 1000) {
+    /* 頂部不執行 */
+    if (0 === window.scrollY) return;
+
+    let animationFrameId;
     const start = window.scrollY;
     const startTime = performance.now();
 
+    /* 動態每一影格的執行動作 */
     function step(now) {
         const elapsed = now - startTime;
-        const progress = Math.min(elapsed / speed, 1);
+        const progress = speed > 0 ? Math.min(elapsed / speed, 1) : 1;
+
         window.scrollTo(0, start * (1 - progress));
 
-        if (progress < 1) {
+        if (1 > progress) {
             animationFrameId = requestAnimationFrame(step);
         } else {
-            removeWheelListener();
+            stopInteracting();
         }
     }
 
-    function onWheel() {
-        cancelAnimationFrame(animationFrameId);
-        removeWheelListener();
+    /* 停止動作 + 移除監聽器 */
+    function stopInteracting() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('wheel', stopInteracting);
+        window.removeEventListener('touchstart', stopInteracting);
     }
 
-    function removeWheelListener() {
-        window.removeEventListener('wheel', onWheel, {
-            passive: true
-        });
-    }
+    /* 監聽使用者交互行為 */
+    window.addEventListener('wheel', stopInteracting, { passive: true });
+    window.addEventListener('touchstart', stopInteracting, { passive: true });
 
-    window.addEventListener('wheel', onWheel, {
-        passive: true
-    });
-    let animationFrameId = requestAnimationFrame(step);
+    animationFrameId = requestAnimationFrame(step);
 }
 
 
@@ -464,30 +474,56 @@ function scrollToTop(speed = 1000) {
  * @access    public
  *
  * @param     {boolean} isHeader    扣除頁首高度
+ * @param {number}  speed           捲動速度 (ms)
  *
  * @return    {void}
  */
-function scrollDown(isHeader = false) {
-    /* head高度 */
-    let headHeight = 0;
+function scrollDown(isHeader = false, speed = 800) {
+    const scrollItem = document.querySelector('.j-scrollItem');
+    if (!scrollItem) return;
 
+    /* 計算目標位置 (絕對座標) */
+    const targetTop = scrollItem.getBoundingClientRect().top + window.scrollY;
+
+    let headHeight = 0;
     if (isHeader) {
         const header = document.querySelector('header');
         headHeight = header ? header.offsetHeight : 0;
     }
 
-    /* 取得目標元素 (第一個區塊) */
-    const scrollItem = document.querySelector('.j-scrollItem');
-    if (!scrollItem) return;
+    const finalPosition = targetTop - headHeight;
+    const startPosition = window.scrollY;
+    const distance = finalPosition - startPosition;
 
-    /* 計算捲動位置：元素底部位置 - 頁首高度 */
-    const position = scrollItem.offsetHeight - headHeight;
+    let animationFrameId;
+    const startTime = performance.now();
 
-    /* 原生平滑捲動 API */
-    window.scrollTo({
-        top: position,
-        behavior: 'smooth'
-    });
+    /* 停止動作 + 移除監聽器 */
+    function stopInteracting() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('wheel', stopInteracting);
+        window.removeEventListener('touchstart', stopInteracting);
+    }
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const progress = speed > 0 ? Math.min(elapsed / speed, 1) : 1;
+
+        /* 執行捲動 */
+        window.scrollTo(0, startPosition + (distance * progress));
+
+        if (1 > progress) {
+            animationFrameId = requestAnimationFrame(step);
+        } else {
+            stopInteracting();
+        }
+    }
+
+    /* 監聽介入行為 */
+    window.addEventListener('wheel', stopInteracting, { passive: true });
+    window.addEventListener('touchstart', stopInteracting, { passive: true });
+
+    animationFrameId = requestAnimationFrame(step);
 }
 
 
