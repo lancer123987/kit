@@ -28,13 +28,13 @@
 ## 🟩 css 規範
 
 ### 1. BEM 命名架構
-全域採用 BEM (Block, Element, Modifier) 命名法，嚴格區隔元件結構與狀態。
-範例：.index (Block), .index__box (Element)
+* 全域採用 BEM (Block, Element, Modifier) 命名法，嚴格區隔元件結構與狀態。
+* 範例：.index (Block), .index__box (Element)
 
 ### 2. 前綴說明
 為了快速識別作用範圍，請務必遵循前綴規則：
-c- (Common)：跨頁面使用的共用項目/元件。
-p- (Page)：僅限該頁面使用的專屬項目。
+* c- (Common)：跨頁面使用的共用項目/元件。
+* p- (Page)：僅限該頁面使用的專屬項目。
 
 ### 3. 保留 Class 使用限制
 特定顏色敘述之 Class（如 .red）為保留名稱，僅允許用於定義 color 或 background 等視覺狀態，禁止用於結構佈局。
