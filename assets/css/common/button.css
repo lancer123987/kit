@@ -25,6 +25,7 @@
 
 [class^="c-bt"] input[type="submit"],
 [class^="c-bt"] input[type="reset"],
+[class^="c-bt"] input[type="button"],
 [class^="c-bt"] button,
 [class^="c-bt"] span {
     display: block;
