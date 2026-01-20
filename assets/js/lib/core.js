@@ -65,6 +65,50 @@ function devError(message) {
 
 /**========================================================================
  *
+ * @description DOM 屬性擴充
+ *
+ * ========================================================================*/
+
+/**
+ * 判斷 css sticky 元素是否釘住
+ *
+ * @access    public
+ *
+ * @return    {boolean}
+ */
+(function () {
+    /* 定義核心判斷邏輯 */
+    let checkStatus = function (el) {
+        let rect = el.getBoundingClientRect();
+        let style = window.getComputedStyle(el);
+        let stickyTop = parseInt(style.top, 10) || 0;
+
+        return (rect.top <= stickyTop);
+    };
+
+    /* 注入原生 HTMLElement 原型 */
+    if ('undefined' !== typeof HTMLElement && !HTMLElement.prototype.isSticky) {
+        HTMLElement.prototype.isSticky = function () {
+            return checkStatus(this);
+        };
+    }
+
+    /* 注入 jQuery 插件原型 */
+    if ('undefined' !== typeof jQuery && !jQuery.fn.isSticky) {
+        jQuery.fn.isSticky = function () {
+            if (0 === this.length) {
+                return false;
+            }
+            return checkStatus(this[0]);
+        };
+    }
+})();
+
+
+
+
+/**========================================================================
+ *
  * @description 環境偵測
  *
  * ========================================================================*/
