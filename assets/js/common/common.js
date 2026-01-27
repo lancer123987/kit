@@ -29,8 +29,14 @@ jQuery(document).ready(function () {
         }
     };
 
-    /* wow.js 初始化 */
-    new WOW().init();
+    /* 進場動畫效果初始化 */
+    observable.init({
+        target: '.wow',
+        onEnter: (el) => {
+            el.style.visibility = 'visible';
+            el.classList.add('animated');
+        }
+    });
 
     /* 循環動畫效能優化 (可視偵測) */
     observeInfAnim();
