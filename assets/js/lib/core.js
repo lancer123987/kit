@@ -65,6 +65,40 @@ function devError(message) {
 
 /**========================================================================
  *
+ * @description 數值處理
+ *
+ * ========================================================================*/
+/**
+ * 數值限制
+ *
+ * @access    public
+ *
+ * @param     {number}  min   最小值
+ * @param     {number}  num   目標值
+ * @param     {number}  max   最大值
+ *
+ * @return    {number}
+ */
+function clamp(min, num, max) {
+    /* 參數型別檢查 */
+    if ('number' !== typeof min || 'number' !== typeof num || 'number' !== typeof max) {
+        devError('clamp error: All parameters (min, num, max) must be of type number.');
+    }
+
+    /* 邊界邏輯檢查 */
+    if (min > max) {
+        devError(`clamp error: Minimum value (${min}) cannot be greater than Maximum value (${max}).`);
+    }
+
+    const result = Math.min(Math.max(num, min), max);
+    return result;
+}
+
+
+
+
+/**========================================================================
+ *
  * @description DOM 屬性擴充
  *
  * ========================================================================*/
@@ -422,6 +456,86 @@ const ResizeHandler = ((direction = 'x') => {
         init
     };
 })();
+
+
+/**
+ * 監控元素進入/離開視窗
+ * 
+ */
+const observable = {
+    /**
+     * 初始化觀察器
+     *
+     * @access    public
+     *
+     * @param     {Object}    options           初始化參數
+     * @param     {string}    options.target    CSS 選擇器 (例如: '.scroll-box')
+     * @param     {number}    options.top       偵測區域頂部縮減的 px
+     * @param     {number}    options.bottom    偵測區域底部縮減的 px
+     * @param     {number}    options.threshold 觸發閾值 (0.0 ~ 1.0)
+     * @param     {boolean}   options.once      是否只觸發一次進入動作 (預設 true)
+     * @param     {function}  options.onEnter   進入偵測區的回調函數   (支援 async)
+     * @param     {function}  options.onLeave   離開偵測區的回調函數
+     *
+     * @return    {function|null}               停止所有觀察的方法，方便手動銷毀
+     */
+    init({
+        target,
+        top = 0,
+        bottom = 0,
+        threshold = 0,
+        once = true,
+        onEnter,
+        onLeave
+    }) {
+        /* 若定義了 onLeave，代表需要反覆執行，強制將 once 設為 false */
+        const shouldOnce = onLeave ? false : once;
+
+        /* 設定偵測邊界 (Top, Right, Bottom, Left) */
+        const marginTop = 0 - top;
+        const marginBottom = 0 - bottom;
+        const rootMargin = `${marginTop}px 0px ${marginBottom}px 0px`;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(async (entry) => {
+                const el = entry.target;
+
+                if (entry.isIntersecting) {
+                    /* --- 進入偵測區域 --- */
+                    if (shouldOnce) {
+                        observer.unobserve(el);
+                    }
+
+                    if ('function' === typeof onEnter) {
+                        await onEnter(el);
+                    }
+                } else {
+                    /* --- 離開偵測區域 --- */
+                    if ('function' === typeof onLeave) {
+                        await onLeave(el);
+                    }
+                }
+            });
+        }, {
+            rootMargin: rootMargin,
+            threshold: threshold
+        });
+
+        const elements = document.querySelectorAll(target);
+        if (0 === elements.length) {
+            devWarn(`[Observable] 找不到目標元素: ${target}`);
+            return null;
+        }
+
+        elements.forEach((el) => {
+            observer.observe(el);
+        });
+
+        return () => {
+            observer.disconnect();
+        };
+    }
+};
 
 
 /**
