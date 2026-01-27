@@ -317,61 +317,75 @@ function getHashKey() {
  */
 const ResizeHandler = ((direction = 'x') => {
     /* 預設時間間隔 */
-    const delayDefault = 500;
+    const delayDefault = 400;
 
-    /* 預設的resize處理函式 */
-    const defaultResizeEvent = () => {};
-
-    /* 初始化方法 */
-    const init = (customResizeEvent = defaultResizeEvent, debounceDelay = delayDefault) => {
+    /**
+     * 初始化方法
+     *
+     * @access    public
+     *
+     * @param     {function}  customResizeEvent   自訂處理函式
+     * @param     {string}    targetSelector      監控目標選擇器
+     * @param     {number}    debounceDelay       防抖延遲時間
+     *
+     * @return    {void}
+     */
+    const init = (customResizeEvent, targetSelector = 'body', debounceDelay = delayDefault) => {
         /* 防抖動功能是否存在 */
-        if ('function' !== typeof debounce) return devError('ResizeHandler: Required function "debounce" is missing.');
+        if ('function' !== typeof debounce) {
+            return devError('ResizeHandler: Required function "debounce" is missing.');
+        }
 
-        const debouncedDefaultResizeEvent = debounce(defaultResizeEvent, debounceDelay);
-        const debouncedCustomResizeEvent = debounce(customResizeEvent, debounceDelay);
+        const targetEl = document.querySelector(targetSelector);
+        if (!targetEl) return;
 
-        /* 初始觸發 */
-        defaultResizeEvent();
-        customResizeEvent();
+        /* 紀錄最後一次觸發時的尺寸 */
+        let lastWidth = targetEl.offsetWidth;
+        let lastHeight = targetEl.offsetHeight;
 
-        let lastWidth = window.innerWidth;
-        let lastHeight = window.innerHeight;
+        /* 包裝回調函式 */
+        const debouncedCustomEvent = debounce(() => {
+            if ('function' === typeof customResizeEvent) {
+                customResizeEvent();
+            }
+        }, debounceDelay);
 
-        /* 綁定resize事件 */
-        const resizeHandler = () => {
-            const newWidth = window.innerWidth;
-            const newHeight = window.innerHeight;
+        /* 初始觸發一次 */
+        if ('function' === typeof customResizeEvent) {
+            customResizeEvent();
+        }
+
+        /* 建立 Observer */
+        const resizeObserver = new ResizeObserver((entries) => {
+            const entry = entries[0];
+            if (!entry) return;
+
+            /* 取得目前尺寸 (浮點數精確度更高) */
+            const { width: currentWidth, height: currentHeight } = entry.contentRect;
             let trigger = false;
 
+            /* 方向判斷邏輯 */
             switch (direction) {
                 case 'x':
-                    if (newWidth !== lastWidth) trigger = true;
+                    if (currentWidth !== lastWidth) trigger = true;
                     break;
                 case 'y':
-                    if (newHeight !== lastHeight) trigger = true;
+                    if (currentHeight !== lastHeight) trigger = true;
                     break;
                 case 'both':
                 default:
-                    if (newWidth !== lastWidth || newHeight !== lastHeight) trigger = true;
+                    if (currentWidth !== lastWidth || currentHeight !== lastHeight) trigger = true;
             }
 
             if (trigger) {
-                lastWidth = newWidth;
-                lastHeight = newHeight;
-                debouncedDefaultResizeEvent();
-                debouncedCustomResizeEvent();
+                lastWidth = currentWidth;
+                lastHeight = currentHeight;
+                debouncedCustomEvent();
             }
-        };
+        });
 
-        window.addEventListener('resize', resizeHandler);
-
-        /* 綁定orientation change事件 */
-        if (screen.orientation && screen.orientation.addEventListener) {
-            screen.orientation.addEventListener('change', resizeHandler);
-        } else {
-            /* 如果不支援screen.orientation */
-            devWarn('Device does not support orientation.');
-        }
+        /* 開始監控 */
+        resizeObserver.observe(targetEl);
     };
 
     return {
