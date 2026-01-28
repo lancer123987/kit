@@ -770,7 +770,7 @@ function handleSelectLinkChange($select) {
  *
  * @return    {void}
  */
-function setDialog(type, setting, callback1, callback2) {
+function setDialog(type, setting = {}, callback1, callback2) {
 const lightbox = document.querySelector('.j-lightbox[data-lightbox="dialog"]');
     if (!lightbox) return;
 
