@@ -45,7 +45,7 @@ jQuery(document).ready(function () {
     headerScroll();
 
 
-    debounceScroll(function () {
+    observeScroll(() => {
         /* header 滾動樣式偵測 */
         headerScroll();
     });
@@ -231,33 +231,6 @@ document.querySelectorAll('.c-img-load').forEach(img => {
         this.classList.remove('c-img-load');
     });
 });
-
-
-/* 滾動防抖動 */
-function debounceScroll(callback) {
-    let ticking = false;
-
-    function handler(e) {
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                callback(e);
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }
-
-    window.addEventListener('wheel', handler, {
-        passive: true
-    });
-    window.addEventListener('touchmove', handler, {
-        passive: true
-    });
-    window.addEventListener('scroll', handler, {
-        passive: true
-    });
-}
-
 
 
 /**

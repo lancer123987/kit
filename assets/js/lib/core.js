@@ -439,7 +439,10 @@ const ResizeHandler = ((direction = 'x') => {
             if (!entry) return;
 
             /* 取得目前尺寸 (浮點數精確度更高) */
-            const { width: currentWidth, height: currentHeight } = entry.contentRect;
+            const {
+                width: currentWidth,
+                height: currentHeight
+            } = entry.contentRect;
             let trigger = false;
 
             /* 方向判斷邏輯 */
@@ -553,6 +556,92 @@ const observable = {
 
 
 /**
+ * 滾動效能優化
+ * 
+ * @access   public
+ * 
+ * @param    {Function} callback - () => {} (節能模式) 或 (data) => {} (詳細模式)
+ * 
+ * @return   {Function} destroy - 解除監聽函式
+ */
+function observeScroll(callback) {
+    if ('function' !== typeof callback) return;
+
+    /* 滾動緩衝 */
+    const buffer = 2;
+
+    let ticking = false;
+
+    /* 紀錄上一次捲動的位置 */
+    let wasTop = false;
+    let wasBottom = false;
+    let lastScrollTop = (callback.length > 0) ? (window.pageYOffset || document.documentElement.scrollTop) : null;
+
+    function handler(e) {
+        if (ticking) return;
+
+        ticking = true;
+        window.requestAnimationFrame(() => {
+            if (0 === callback.length) {
+                callback();
+            } else {
+                const currentScrollTop = Math.max(0, window.pageYOffset || document.documentElement.scrollTop);
+                const windowHeight = window.innerHeight;
+                const docHeight = document.documentElement.scrollHeight;
+
+                let direction = 'none';
+                const delta = currentScrollTop - lastScrollTop;
+
+                if (Math.abs(delta) > buffer) {
+                    direction = delta > 0 ? 'down' : 'up';
+                }
+
+                const isTop = currentScrollTop <= 0;
+                const isBottom = currentScrollTop + windowHeight >= docHeight - 1;
+
+                const shouldCall = direction !== 'none' || (isTop && !wasTop) || (isBottom && !wasBottom);
+
+                if (shouldCall) {
+                    /* 回傳項目 */
+                    callback({
+                        event: e,
+                        direction,
+                        scrollTop: currentScrollTop,
+                        prevScrollTop: lastScrollTop,
+                        isTop: isTop,
+                        isBottom: isBottom
+                    });
+                }
+
+                lastScrollTop = currentScrollTop;
+                wasTop = isTop;
+                wasBottom = isBottom;
+            }
+
+            ticking = false;
+        });
+    }
+
+    const options = {
+        passive: true
+    };
+    const events = ['wheel', 'touchmove', 'scroll'];
+
+    /* 綁定事件 */
+    events.forEach(evt => window.addEventListener(evt, handler, options));
+
+    /**
+     * 解除監聽機制
+     */
+    return function destroy() {
+        events.forEach(evt => window.removeEventListener(evt, handler, options));
+        lastScrollTop = null;
+        ticking = wasTop = wasBottom = false;
+    };
+}
+
+
+/**
  * 循環動畫效能優化 (可視偵測)
  *
  * @access    public
@@ -566,7 +655,8 @@ function observeInfAnim() {
     /* Observer 設定 */
     let options = {
         root: null,
-        rootMargin: '0px', /* 可視邊界調整 */
+        rootMargin: '0px',
+        /* 可視邊界調整 */
         threshold: 0 /* 進入觸發比例 */
     };
 
@@ -633,8 +723,12 @@ function scrollToTop(speed = 1000) {
     }
 
     /* 監聽使用者交互行為 */
-    window.addEventListener('wheel', stopInteracting, { passive: true });
-    window.addEventListener('touchstart', stopInteracting, { passive: true });
+    window.addEventListener('wheel', stopInteracting, {
+        passive: true
+    });
+    window.addEventListener('touchstart', stopInteracting, {
+        passive: true
+    });
 
     animationFrameId = requestAnimationFrame(step);
 }
@@ -692,8 +786,12 @@ function scrollDown(isHeader = false, speed = 800) {
     }
 
     /* 監聽介入行為 */
-    window.addEventListener('wheel', stopInteracting, { passive: true });
-    window.addEventListener('touchstart', stopInteracting, { passive: true });
+    window.addEventListener('wheel', stopInteracting, {
+        passive: true
+    });
+    window.addEventListener('touchstart', stopInteracting, {
+        passive: true
+    });
 
     animationFrameId = requestAnimationFrame(step);
 }
@@ -775,15 +873,17 @@ function setDialog(type, setting = {}, callback1, callback2) {
     if (!lightbox) return;
 
     /* setting 預設值 */
-    const { title = '', sub = '', icon = '', content = '' } = setting;
+    const {
+        title = '', sub = '', icon = '', content = ''
+    } = setting;
 
     /* 預先抓取 UI 元件 */
-    const elTitle   = lightbox.querySelector('.j-dialog-title');
-    const elSub     = lightbox.querySelector('.j-dialog-sub');
-    const elIcon    = lightbox.querySelector('.j-dialog-icon');
+    const elTitle = lightbox.querySelector('.j-dialog-title');
+    const elSub = lightbox.querySelector('.j-dialog-sub');
+    const elIcon = lightbox.querySelector('.j-dialog-icon');
     const elContent = lightbox.querySelector('.j-dialog-content');
-    const btn1      = lightbox.querySelector('.j-dialog-callback1');
-    const btn2      = lightbox.querySelector('.j-dialog-callback2');
+    const btn1 = lightbox.querySelector('.j-dialog-callback1');
+    const btn2 = lightbox.querySelector('.j-dialog-callback2');
 
     /* 開啟 Lightbox */
     if ('clear' !== type) lightbox.classList.add('active');
@@ -805,17 +905,17 @@ function setDialog(type, setting = {}, callback1, callback2) {
     }
 
     /* 自訂 UI 內容填充 */
-    if (elTitle)   elTitle.innerHTML = title;
-    if (elSub)     elSub.innerHTML   = sub;
-    if (elIcon)    icon ? elIcon.setAttribute('data-icon', icon) : elIcon.removeAttribute('data-icon');
+    if (elTitle) elTitle.innerHTML = title;
+    if (elSub) elSub.innerHTML = sub;
+    if (elIcon) icon ? elIcon.setAttribute('data-icon', icon) : elIcon.removeAttribute('data-icon');
 
     /* 自訂訊息內容處理 */
     if (elContent) {
         let finalContent = content;
         if (Array.isArray(content)) {
-            finalContent = content.length > 1
-                ? content.map((item, i) => `${i + 1}. ${item}`).join('<br>')
-                : (content[0] || '');
+            finalContent = content.length > 1 ?
+                content.map((item, i) => `${i + 1}. ${item}`).join('<br>') :
+                (content[0] || '');
         }
         elContent.innerHTML = finalContent;
     }
@@ -844,10 +944,10 @@ function setDialog(type, setting = {}, callback1, callback2) {
         case 'clear':
             lightbox.classList.remove('active');
             /* 清空內容與狀態 */
-            if (elTitle)   elTitle.innerHTML = '';
-            if (elSub)     elSub.innerHTML = '';
+            if (elTitle) elTitle.innerHTML = '';
+            if (elSub) elSub.innerHTML = '';
             if (elContent) elContent.innerHTML = '';
-            if (elIcon)    elIcon.removeAttribute('data-icon');
+            if (elIcon) elIcon.removeAttribute('data-icon');
             if (btn1) {
                 btn1.style.display = 'none';
                 btn1.onclick = null;
