@@ -885,6 +885,10 @@ function setDialog(type, setting = {}, callback1, callback2) {
     const btn1 = lightbox.querySelector('.j-dialog-callback1');
     const btn2 = lightbox.querySelector('.j-dialog-callback2');
 
+    /* 清除按鈕事件 */
+    if (btn1) btn1.onclick = null;
+    if (btn2) btn2.onclick = null;
+
     /* 開啟 Lightbox */
     if ('clear' !== type) lightbox.classList.add('active');
 
