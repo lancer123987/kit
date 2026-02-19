@@ -1,33 +1,18 @@
 jQuery(document).ready(function () {
     /* Passive event listeners */
-    jQuery.event.special.touchstart = {
-        setup: function (_, ns, handle) {
-            this.addEventListener("touchstart", handle, {
-                passive: false
-            });
-        }
-    };
-    jQuery.event.special.touchmove = {
-        setup: function (_, ns, handle) {
-            this.addEventListener("touchmove", handle, {
-                passive: false
-            });
-        }
-    };
-    jQuery.event.special.wheel = {
-        setup: function (_, ns, handle) {
-            this.addEventListener("wheel", handle, {
-                passive: true
-            });
-        }
-    };
-    jQuery.event.special.mousewheel = {
-        setup: function (_, ns, handle) {
-            this.addEventListener("mousewheel", handle, {
-                passive: true
-            });
-        }
-    };
+    (() => {
+        const passiveEvents = ['touchstart', 'touchmove', 'wheel', 'mousewheel'];
+        passiveEvents.forEach((eventName) => {
+            jQuery.event.special[eventName] = {
+                setup: function (_, ns, handle) {
+                    const isPassive = ('wheel' === eventName || 'mousewheel' === eventName);
+                    this.addEventListener(eventName, handle, {
+                        passive: isPassive
+                    });
+                }
+            };
+        });
+    })();
 
     /* 進場動畫效果初始化 */
     observable.init({

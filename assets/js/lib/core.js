@@ -477,7 +477,7 @@ const ResizeHandler = ((direction = 'x') => {
 
 /**
  * 監控元素進入/離開視窗
- * 
+ *
  */
 const observable = {
     /**
@@ -540,7 +540,6 @@ const observable = {
 
         const elements = document.querySelectorAll(target);
         if (0 === elements.length) {
-            devWarn(`[Observable] 找不到目標元素: ${target}`);
             return null;
         }
 
@@ -557,11 +556,11 @@ const observable = {
 
 /**
  * 滾動效能優化
- * 
+ *
  * @access   public
- * 
+ *
  * @param    {Function} callback - () => {} (節能模式) 或 (data) => {} (詳細模式)
- * 
+ *
  * @return   {Function} destroy - 解除監聽函式
  */
 function observeScroll(callback) {
