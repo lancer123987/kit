@@ -214,6 +214,63 @@ function debounce(func, delay = 500) {
 
 
 /**
+ * 獲取 domain name
+ *
+ * @access    public
+ *
+ * @param     {string}  src       連結
+ *
+ * @return    {string|null}
+ */
+function getDomainName(src) {
+    /* 返回不合法 src */
+    if ('string' !== typeof src || !src) {
+        devError('[getDomainName] Invalid input: src must be a non-empty string.');
+        return '';
+    }
+
+    /* 返回絕對 & 相對路徑 */
+    if (src.startsWith('/') && !src.startsWith('//')) {
+        devWarn(`[getDomainName] Input "${src}" appears to be a path, not a URL. Skipping.`);
+        return '';
+    }
+
+    /* 取得 domain name */
+    let hostname = '';
+
+    if ('function' === typeof window.URL && new URL('https://a.com').hostname) {
+        /* 原生 API 執行區 */
+        /* new URL 必須包含協定，否則會報錯 */
+        const hasProtocol = src.includes('://') || src.startsWith('//');
+
+        if (!hasProtocol) {
+            devWarn(`[getDomainName] URL "${src}" missing protocol. Native "new URL" might fail.`);
+            return '';
+        }
+
+        const target = src.startsWith('//') ? `https:${src}` : src;
+        hostname = new URL(target).hostname;
+
+    } else {
+        /* 備案執行區 (Regex) */
+        devInfo('[getDomainName] Browser does not support "new URL". Falling back to Regex.');
+
+        const match = src.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/im);
+        if (match && match[1]) {
+            hostname = match[1];
+        }
+    }
+
+    if (!hostname) {
+        devWarn(`[getDomainName] Failed to extract hostname from: "${src}"`);
+        return '';
+    }
+
+    return hostname.replace(/^www\./, '');
+}
+
+
+/**
  * 獲取網址 Search 參數值
  *
  * @access    public
