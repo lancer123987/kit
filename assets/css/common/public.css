@@ -28,11 +28,21 @@ html[lang="en-US"]:root {
     letter-spacing: .05em;
 }
 
+*,
+::after,
+::before {
+    box-sizing: inherit
+}
+
 html,
 body {
     width: 100%;
     -webkit-overflow-scrolling: touch;
     overflow-x: hidden;
+}
+
+html {
+    box-sizing: border-box;
 }
 
 body {
