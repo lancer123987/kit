@@ -805,7 +805,7 @@ function scrollDown(isHeader = false, speed = 800) {
     if (!scrollItem) return;
 
     /* 計算目標位置 (絕對座標) */
-    const targetTop = scrollItem.getBoundingClientRect().top + window.scrollY;
+    const targetTop = scrollItem.getBoundingClientRect().top + window.scrollY + scrollItem.offsetHeight;
 
     let headHeight = 0;
     if (isHeader) {
