@@ -214,7 +214,7 @@ function debounce(func, delay = 500) {
 
 
 /**
- * 獲取 domain name
+ * 獲取 Domain Name
  *
  * @access    public
  *
@@ -1025,5 +1025,66 @@ function setDialog(type, setting = {}, callback1, callback2) {
         default:
             devError(`Invalid dialog type specified: "${type}"`);
             break;
+    }
+}
+
+
+/**
+ * 複製功能
+ * 偵測頁面上所有的 .j-copy 元素並綁定點擊事件
+ * 若瀏覽器不支援剪貼簿 API 則移除該按鈕
+ *
+ * @access    public
+ *
+ * @return    {void}
+ */
+function initCopyAction() {
+    /* 檢查瀏覽器支援度與安全環境 (HTTPS) */
+    if (!navigator.clipboard || !window.isSecureContext) {
+        /* 若不支援，則找出頁面上既存的按鈕並移除 */
+        const $staticButtons = document.querySelectorAll('.j-copy');
+        $staticButtons.forEach(($btn) => $btn.remove());
+        return;
+    }
+
+    /* 使用事件代理，確保動態產生的內容也能觸發 */
+    document.addEventListener('click', (e) => {
+        const $target = e.target.closest('.j-copy');
+
+        /* Yoda Conditions: 判斷是否點擊到目標 */
+        if (null === $target) return;
+
+        e.preventDefault();
+
+        /* 優先取 data-copy 的值，若無則取當前網址 */
+        const textToCopy = $target.getAttribute('data-copy') || location.href;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            /* 成功 */
+            showCopyMessage('已複製連結');
+        }, () => {
+            /* 失敗 */
+            showCopyMessage('複製連結失敗，請與我們聯繫');
+        });
+    });
+
+
+    /**
+     * 提示訊息
+     *
+     * @access    private
+     *
+     * @param     {string}  message  提示訊息
+     *
+     * @return    {void}
+     */
+    function showCopyMessage(message) {
+        if ('function' === typeof setDialog) {
+            setDialog('alert', {
+                content: message
+            });
+        } else {
+            alert(message);
+        }
     }
 }

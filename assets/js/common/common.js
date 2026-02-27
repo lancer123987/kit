@@ -67,30 +67,8 @@ jQuery(document).ready(function () {
     });
 
 
-    /* 當前分類偵測 */
-    jQuery('.j-cid-target').each(function () {
-        let $item = jQuery(this);
-        let target = $item.val(),
-            name = $item.attr('name');
-        jQuery(`.j-cid-goal[data-${name}="${target}"]`).addClass('active');
-    });
-
-
-    /* 複製連結 */
-    if (navigator.clipboard && window.isSecureContext) {
-        jQuery('.j-copy').on('click', function () {
-            let link = location.href;
-            navigator.clipboard.writeText(link).then(function () {
-                /* 代碼複製成功 */
-                alert('已複製連結');
-            }, function () {
-                alert('複製連結失敗，請與我們聯繫');
-            });
-        });
-    } else {
-        /* 瀏覽器不支援移除該按鈕 */
-        jQuery('.j-copy').remove();
-    }
+    /* 複製功能 */
+    initCopyAction();
 
     /* 網頁分享 */
     if (!navigator.share || !isMobileDevice()) {
@@ -137,57 +115,63 @@ jQuery(document).ready(function () {
          }
     }); */
 
-    /****文字編輯器 表格處理*****/
-    jQuery('.c-edit table').each(function () {
-        const $table = jQuery(this);
-        $table.after('<div class="c-edit__table"></div>');
-        $table.next('.c-edit__table').append(jQuery(this).clone());
-        $table.remove();
-    });
 
-    /****文字編輯器 img最大寬度處理*****/
-    jQuery('.c-edit img').each(function () {
-        const $img = jQuery(this);
-        let imgW = $img.attr('width');
-        imgW = imgW ? imgW + 'px' : '100%';
-        $img.css('max-width', `min(100%, ${imgW})`);
-    });
+    /**** 文字編輯器 *****/
+    jQuery('.c-edit').each(function () {
+        const $edit = jQuery(this);
 
-    /****文字編輯器 移除禁用標籤處理*****/
-    jQuery('.c-edit header').each(function () {
-        if (!jQuery('.c-edit header').length) return;
-        let $header = jQuery(this);
-        $header.after($header.html());
-        $header.remove();
-    });
+        /* 表格處理 */
+        $edit.find('table').each(function () {
+            const $table = jQuery(this);
+            $table.after('<div class="c-edit__table"></div>');
+            $table.next('.c-edit__table').append(jQuery(this).clone());
+            $table.remove();
+        });
 
-    /****文字編輯器 iframe處理*****/
-    jQuery('.c-edit iframe').each(function () {
-        let $iframe = jQuery(this);
-        let iframeSrc = $iframe.attr('src'),
-            iframeW = $iframe.attr('width'),
-            iframeH = $iframe.attr('height');
+        /* img最大寬度處理 */
+        $edit.find('img').each(function () {
+            const $img = jQuery(this);
+            let imgW = $img.attr('width');
+            imgW = imgW ? imgW + 'px' : '100%';
+            $img.css('max-width', `min(100%, ${imgW})`);
+        });
 
-        switch (true) {
-            /* Instagram */
-            case iframeSrc.startsWith('https://www.instagram.com'):
-                break;
+        /* 移除禁用標籤處理 */
+        $edit.find('header').each(function () {
+            if (!jQuery('.c-edit header').length) return;
+            let $header = jQuery(this);
+            $header.after($header.html());
+            $header.remove();
+        });
 
-                /* Youtube */
-            case iframeSrc.startsWith('https://www.youtube.com'):
-                let iframeWNum = iframeW || '100%';
-                $iframe.after('<div class="c-edit__youtube"></div>');
-                $iframe.next('.c-edit__youtube').css('max-width', `min(100%, ${iframeW}px)`).css('padding', `min(${iframeWNum * .5625}px, 56.25%) 0 0 0`).append($iframe.clone());
-                $iframe.remove();
-                break;
+        /* iframe處理 */
+        $edit.find('iframe').each(function () {
+            let $iframe = jQuery(this);
+            let iframeSrc = $iframe.attr('src'),
+                iframeW = $iframe.attr('width'),
+                iframeH = $iframe.attr('height');
 
-                /* 預設處理 */
-            default:
-                $iframe.after(`<div class="c-edit__iframe" style="padding: min(${iframeH}px, ${iframeH / iframeW * 100}%) 0 0 0;max-width:${iframeW}px;max-height:${iframeH}px;"></div>`);
-                $iframe.next('.c-edit__iframe').append($iframe.clone());
-                $iframe.remove();
-                break;
-        }
+            switch (true) {
+                /* Instagram */
+                case iframeSrc.startsWith('https://www.instagram.com'):
+                    break;
+
+                    /* Youtube */
+                case iframeSrc.startsWith('https://www.youtube.com'):
+                    let iframeWNum = iframeW || '100%';
+                    $iframe.after('<div class="c-edit__youtube"></div>');
+                    $iframe.next('.c-edit__youtube').css('max-width', `min(100%, ${iframeW}px)`).css('padding', `min(${iframeWNum * .5625}px, 56.25%) 0 0 0`).append($iframe.clone());
+                    $iframe.remove();
+                    break;
+
+                    /* 預設處理 */
+                default:
+                    $iframe.after(`<div class="c-edit__iframe" style="padding: min(${iframeH}px, ${iframeH / iframeW * 100}%) 0 0 0;max-width:${iframeW}px;max-height:${iframeH}px;"></div>`);
+                    $iframe.next('.c-edit__iframe').append($iframe.clone());
+                    $iframe.remove();
+                    break;
+            }
+        });
     });
 
     jQuery('.instagram-media').each(function () {
@@ -339,37 +323,6 @@ function pageMax() {
         }
     });
 };
-
-
-/**
- * 頁面標籤hash tag偵測
- *
- * @access    public
- *
- * @return    void
- */
-function pageTag() {
-    jQuery('.j-pageTag').each(function () {
-        let hash = location.hash;
-        let $pageTag = jQuery(this);
-
-        jQuery('.j-pageSelect').on('change', function () {
-            let link = jQuery(this).val();
-            location.href = link;
-        });
-
-        if (-1 == hash.indexOf('#')) return;
-        let target = hash.split('#')[1];
-
-        if (target != $pageTag.attr('href').split('#')[1]) return;
-        jQuery('.j-pageTag, .j-pageTag-box').removeClass('active');
-        $pageTag.addClass('active');
-        jQuery('.j-pageTag-box[data-box=\"' + target + '\"]').addClass('active');
-
-        jQuery('.j-pageSelect').val(hash);
-        jQuery('.j-pageInput').val(hash);
-    });
-}
 
 
 /**
