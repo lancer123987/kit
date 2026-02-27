@@ -1041,7 +1041,7 @@ function setDialog(type, setting = {}, callback1, callback2) {
 function initCopyAction() {
     /* 檢查瀏覽器支援度與安全環境 (HTTPS) */
     if (!navigator.clipboard || !window.isSecureContext) {
-        /* 若不支援，則找出頁面上既存的按鈕並移除 */
+        /* 若不支援，按鈕移除 */
         const $staticButtons = document.querySelectorAll('.j-copy');
         $staticButtons.forEach(($btn) => $btn.remove());
         return;
@@ -1051,7 +1051,6 @@ function initCopyAction() {
     document.addEventListener('click', (e) => {
         const $target = e.target.closest('.j-copy');
 
-        /* Yoda Conditions: 判斷是否點擊到目標 */
         if (null === $target) return;
 
         e.preventDefault();
