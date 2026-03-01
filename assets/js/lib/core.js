@@ -253,7 +253,7 @@ function getDomainName(src) {
 
     } else {
         /* 備案執行區 (Regex) */
-        devInfo('[getDomainName] Browser does not support "new URL". Falling back to Regex.');
+        devWarn('[getDomainName] Browser does not support "new URL". Falling back to Regex.');
 
         const match = src.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/im);
         if (match && match[1]) {
