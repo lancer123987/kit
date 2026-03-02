@@ -796,7 +796,7 @@ function scrollToTop(speed = 1000) {
  * @access    public
  *
  * @param     {boolean} isHeader    扣除頁首高度
- * @param {number}  speed           捲動速度 (ms)
+ * @param     {number}  speed       捲動速度 (ms)
  *
  * @return    {void}
  */
