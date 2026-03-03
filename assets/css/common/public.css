@@ -224,12 +224,20 @@ textarea::-webkit-scrollbar-thumb {
 
 /****循環動畫節流****/
 [data-animated-infinite="1"],
-[data-animated-infinite="true"] {
+[data-animated-infinite="true"],
+[data-animated-infinite="1"]::before,
+[data-animated-infinite="true"]::before,
+[data-animated-infinite="1"]::after,
+[data-animated-infinite="true"]::after {
     animation-play-state: paused !important;
 }
 
 [data-animated-infinite="1"].play,
-[data-animated-infinite="true"].play {
+[data-animated-infinite="true"].play,
+[data-animated-infinite="1"].play::before,
+[data-animated-infinite="true"].play::before,
+[data-animated-infinite="1"].play::after,
+[data-animated-infinite="true"].play::after {
     animation-play-state: running !important;
 }
 
