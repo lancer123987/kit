@@ -87,8 +87,7 @@ img {
 }
 
 img.c-img-load {
-    background: url(../../images/common/ajax-loader.gif) center no-repeat;
-    background-size: 25px 25px;
+    background: url(../../images/common/ajax-loader.gif) center/25px 25px no-repeat;
 }
 
 video {
