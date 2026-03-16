@@ -31,8 +31,8 @@
     flex: 0 0 auto;
 }
 
-/**背景**/
-.banner__box__item__bg {
+/****背景****/
+.banner-bg {
     display: flex;
     align-items: center;
     align-content: center;
@@ -42,11 +42,18 @@
     height: 100%;
 }
 
-.banner__box__item__bg img,
-.banner__box__item__bg video {
+.banner-bg img,
+.banner-bg video {
     object-fit: cover;
     object-position: center;
     height: 100%;
+}
+
+/****文案****/
+.banner-content {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 @media screen and (max-width: 991px) {}
