@@ -187,6 +187,34 @@
     padding: 0 5px;
 }
 
+/****進度條****/
+.slick-progress {
+    display: block;
+    width: 100%;
+    height: 1px;
+    max-width: 100%;
+    background: #ccc;
+    overflow: hidden;
+}
+
+.slick-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--mainColor);
+    transform-origin: left center;
+    will-change: transform;
+}
+
+.slick-progress.run::after {
+    transform: none;
+    transition: transform var(--autoplaySpeedTime) linear;
+}
+
 @media screen and (max-width: 575px) {
 
     .slick-prev,
