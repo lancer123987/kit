@@ -106,6 +106,11 @@ jQuery.fn.initSlick = function (config = {}) {
         /* 擴充功能 */
         slickPlugin($this, conf, slickPlugin_SET);
 
+        /* 宣告初始化完成 */
+        $this.one('init.slickExtend', function() {
+            jQuery(this).addClass('isInit');
+        });
+
         /* 啟動slick */
         $this.slick(finalSettings);
     });
