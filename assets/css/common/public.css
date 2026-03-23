@@ -628,8 +628,14 @@ textarea::-webkit-scrollbar-thumb {
     overflow: hidden;
 }
 
+.c-banner__inner {
+    display: block;
+    width: calc(100% - 120px);
+    margin: 0 auto;
+}
+
 /**背景**/
-.c-banner__bg {
+.c-banner-bg {
     position: absolute;
     top: 0;
     left: 0;
@@ -642,20 +648,27 @@ textarea::-webkit-scrollbar-thumb {
     height: 100%;
 }
 
-.c-banner__bg img {
+.c-banner-bg img {
     object-fit: cover;
     object-position: center;
     height: 100%;
 }
 
 /**文案**/
-.c-banner__content {
+.c-banner-content {
     display: block;
     width: 100%;
 }
 
-/****RWD start****/
-@media screen and (max-width:1199px) {}
+.c-banner-content__title {
+    display: block;
+    width: 100%;
+}
+
+.c-banner-content__sub {
+    display: block;
+    width: 100%;
+}
 
 @media screen and (max-width: 991px) {
 
