@@ -4,6 +4,7 @@
     --mainColor: #a40000;
     --textColor: #2e2e2e;
     --screenHeight: 100vh;
+    --headerHeight: 100px;
     --textAlign: justify;
 }
 
@@ -353,7 +354,7 @@ textarea::-webkit-scrollbar-thumb {
 /****錨點****/
 .c-anchor {
     position: absolute;
-    top: 0;
+    top: calc(var(--headerHeight) - 30px);
     left: 0;
     display: block;
     width: 0;
@@ -407,6 +408,38 @@ textarea::-webkit-scrollbar-thumb {
     flex: 0 0 auto;
 }
 
+/****共用日期****/
+.c-date {
+    display: block;
+    width: 100%;
+}
+
+/****共用標籤****/
+.c-tag {
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    margin: 0 0 -10px 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    font-family: inherit;
+}
+
+.c-tag__item {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    margin: 0 10px 10px 0;
+}
+
+.c-tag__item:last-child {
+    margin: 0 0 10px 0;
+}
+
 /****查無資料****/
 .c-nodata {
     display: none;
@@ -421,202 +454,6 @@ textarea::-webkit-scrollbar-thumb {
 
 .c-nodata.noList,
 .c-nodata:first-child:last-child {
-    display: block;
-}
-
-/****檔案上傳****/
-.c-file {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-items: flex-start;
-    justify-content: flex-start;
-    width: 100%;
-}
-
-.c-file__title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    align-content: center;
-    justify-items: flex-start;
-    justify-content: space-between;
-    width: auto;
-    max-width: 100%;
-    flex: 0 0 auto;
-}
-
-.c-file__title__text {
-    display: block;
-    width: 100%;
-    max-width: 100%;
-    margin: 0 15px 0 0;
-    flex: 0 1 auto;
-}
-
-/**必填**/
-.c-file.required .c-file__title__text {
-    padding: 0 20px 0 0;
-}
-
-.c-file.required .c-file__title__text::after {
-    content: '*';
-    position: absolute;
-    top: calc(50% - .4em);
-    right: 0;
-    display: block;
-    width: auto;
-    max-width: 100%;
-    font-size: 20px;
-    color: var(--mainColor);
-}
-
-/**提示文字**/
-.c-file__title__hint {
-    display: none;
-    margin: 0 0 5px 0;
-    font-size: 12px;
-    line-height: 1.7;
-    color: #fe0000;
-    flex: 0 1 auto;
-}
-
-.c-file__item {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-items: flex-start;
-    justify-content: flex-start;
-    width: 100%;
-    flex: 0 1 auto;
-}
-
-.c-file.hasfile .c-file__item {
-    display: none;
-}
-
-.c-file__item__input {
-    display: flex;
-    align-items: center;
-    align-content: center;
-    justify-items: flex-start;
-    justify-content: flex-start;
-    width: 100%;
-    height: 60px;
-    padding: 15px 30px;
-    font-size: 15px;
-    line-height: 1;
-    color: var(--titleColor);
-    background: #f5f5f5;
-    overflow: hidden;
-    flex: 0 1 auto;
-}
-
-.c-file.hasfile .c-file__item__input::after {
-    content: attr(data-file);
-}
-
-.c-file__item__input input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 10;
-}
-
-.c-file__del {
-    display: none;
-    width: 40px;
-    height: 40px;
-    margin: 0 0 0 20px;
-    font-size: 15px;
-    line-height: 1.7;
-    color: #fff;
-    font-family: 'NotoSansTC-M';
-    border-radius: 50%;
-    background: var(--mainColor);
-    transition: opacity .4s ease-in-out;
-    flex: 0 0 auto;
-    overflow: hidden;
-}
-
-.c-file.hasfile .c-file__del {
-    display: block;
-}
-
-.c-file__del::before,
-.c-file__del::after {
-    content: '';
-    position: absolute;
-    top: calc(50% - .5px);
-    left: 25%;
-    display: block;
-    width: 50%;
-    height: 1px;
-    background: #fff;
-    transform-origin: center;
-}
-
-.c-file__del::before {
-    transform: rotate(45deg);
-}
-
-.c-file__del::after {
-    transform: rotate(-45deg);
-}
-
-.c-file__del:hover {
-    opacity: .7;
-}
-
-/**提示文字**/
-.c-file__item__hint {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    display: block;
-    width: 100%;
-    font-size: 12px;
-    line-height: 1;
-    color: #fe0000;
-}
-
-.c-file__item__btn {
-    display: inline-flex;
-    align-items: center;
-    align-content: center;
-    justify-items: center;
-    justify-content: center;
-    width: 120px;
-    height: 60px;
-    margin: 0 0 0 20px;
-    font-size: 15px;
-    line-height: 1.7;
-    color: #fff;
-    font-family: 'NotoSansTC-M';
-    background: #000;
-    cursor: pointer;
-    transition: opacity .4s ease-in-out;
-    flex: 0 0 auto;
-}
-
-.c-file__item__btn:hover {
-    opacity: .7;
-}
-
-.c-file.hasfile .c-file__item__btn {
-    display: none;
-}
-
-.c-file__download {
-    display: none;
-    min-width: 180px;
-}
-
-.c-file.hasfile .c-file__download {
     display: block;
 }
 
@@ -671,24 +508,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width: 991px) {
-
-    /****錨點****/
-    .c-anchor {
-        top: 0;
-    }
-
-    /****檔案上傳****/
-    .c-file {
-        flex-wrap: wrap;
-    }
-
-    .c-file.hasfile .c-file__item {
-        width: calc(100% - 60px);
-    }
-
-    .c-file__title__text {
-        display: inline-block;
-        width: auto;
+    :root {
+        --headerHeight: 80px;
     }
 
     /****共用banner****/
@@ -705,85 +526,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 @media screen and (max-width: 575px) {
-
-    /****錨點****/
-    .c-anchor {
-        top: 0;
-    }
-
-    /****檔案上傳****/
-    .c-file__item {
-        display: block;
-    }
-
-    .c-file.c-file.hasfile .c-file__item {
-        width: 100%;
-    }
-
-    .c-file__item__input {
-        height: 45px;
-        padding: 15px 20px;
-    }
-
-    /**提示文字**/
-    .c-file__item__hint {
-        display: none;
-    }
-
-    .c-file__item__btn {
-        width: 100%;
-        height: 45px;
-        margin: 10px 0 0 0;
-    }
-
-    .c-file__title {
-        width: 100%;
-        margin: 0 0 5px 0;
-    }
-
-    .c-file__title__text {
-        display: inline-block;
-        margin: 0 0 5px 0;
-    }
-
-    .c-file.required .c-file__title__text::after {
-        top: calc(50% - .5em);
-    }
-
-    .c-file__title__text br {
-        display: none;
-    }
-
-    .c-file__del {
-        width: 100%;
-        height: 45px;
-        margin: 10px 0 0 0;
-        border-radius: 15px;
-    }
-
-    .c-file__del::before {
-        display: none;
-    }
-
-    .c-file__del::after {
-        content: '刪除';
-        position: relative;
-        top: auto;
-        left: auto;
-        width: 100%;
-        height: auto;
-        background: none;
-        transform: none;
-    }
-
-    /**提示文字**/
-    .c-file__title__hint {
-        display: block;
-    }
-
-    .c-file__download {
-        width: 100%;
-        min-width: 0;
+    :root {
+        --headerHeight: 60px;
     }
 
     /****共用banner****/

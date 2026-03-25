@@ -1,0 +1,64 @@
+@charset "UTF-8";
+
+.c-news {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    z-index: 0;
+    flex: 0 0 auto;
+}
+
+.c-news.wow.animated {
+    animation-name: fadeInUp;
+}
+
+/****媒體****/
+.c-news__media,
+.c-news__media__pic {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+}
+
+/****文案****/
+.c-news__content {
+    display: block;
+    width: 100%;
+}
+
+.c-news-title {
+    display: block;
+    width: 100%;
+}
+
+/****連結****/
+.c-news-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+}
+
+@media screen and (max-width: 991px) {}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {}
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}

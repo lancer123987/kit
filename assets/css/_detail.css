@@ -1,0 +1,110 @@
+@charset "UTF-8";
+
+.detail {
+    display: block;
+    width: 100%;
+}
+
+/*===========================================
+ * 基本資訊
+ *===========================================*/
+.detail-base {
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/****媒體****/
+.detail-media {
+    display: block;
+    width: 50%;
+    margin: 0 50px 0 0;
+    flex: 0 0 auto;
+}
+
+.detail-media__box {
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    overflow: hidden;
+}
+
+.detail-media__item {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.detail-media__item__pic {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+}
+
+/****文案****/
+.detail-info {
+    display: block;
+    width: 100%;
+    flex: 0 1 auto;
+}
+
+.detail-info__title {
+    display: block;
+    width: 100%;
+}
+
+.detail-info .c-text {}
+
+/*===========================================
+ * 主文案
+ *===========================================*/
+.detail-body {
+    display: block;
+    width: 100%;
+}
+
+.detail-body__edit {
+    display: block;
+    width: 100%;
+}
+
+@media screen and (max-width: 991px) {
+
+    /*===========================================
+     * 基本資訊
+     *===========================================*/
+    .detail-base {
+        display: block;
+    }
+
+    /****媒體****/
+    .detail-media {
+        width: 100%;
+        margin: 0 0 30px 0;
+    }
+
+}
+
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {}
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
+
+/****IOS樣式****/
+@supports (-webkit-touch-callout: none) {}
+
+/****firefox樣式****/
+@-moz-document url-prefix() {}
