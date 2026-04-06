@@ -3,6 +3,7 @@
 :root {
     --mainColor: #a40000;
     --textColor: #2e2e2e;
+    --originalScreenHeight: 100vh;
     --screenHeight: 100vh;
     --headerHeight: 100px;
     --textAlign: justify;
@@ -12,6 +13,10 @@ html[lang="en-US"]:root {
     --textAlign: left;
 }
 
+
+/*===========================================
+ * Reset
+ *===========================================*/
 * {
     position: relative;
     margin: 0;
@@ -51,6 +56,22 @@ body {
     overflow: hidden;
 }
 
+/****卷軸樣式****/
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+    width: 6px;
+    height: 4px;
+    background: #ddd;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb {
+    background: var(--mainColor);
+}
+
+/***元素樣式****/
 ul,
 ol {
     margin: 0;
@@ -128,7 +149,6 @@ button:focus {
     outline: none;
 }
 
-/**IOS樣式去除**/
 select,
 input,
 textarea {
@@ -202,25 +222,10 @@ textarea {
     resize: none;
 }
 
-/**IE箭頭去除**/
-select::-ms-expand {
-    display: none;
-}
 
-/****卷軸樣式****/
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-textarea::-webkit-scrollbar {
-    width: 6px;
-    height: 4px;
-    background: #ddd;
-}
-
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb,
-textarea::-webkit-scrollbar-thumb {
-    background: var(--mainColor);
-}
+/*===========================================
+ * 功能層css
+ *===========================================*/
 
 /****循環動畫節流****/
 [data-animated-infinite="1"],
@@ -241,7 +246,31 @@ textarea::-webkit-scrollbar-thumb {
     animation-play-state: running !important;
 }
 
-/****共用列表****/
+/****wow****/
+.wow {
+    opacity: 0;
+    animation: 1s .4s ease-in-out forwards;
+    visibility: hidden;
+}
+
+
+/*===========================================
+ * 通用屬性
+ *===========================================*/
+
+/****顏色****/
+.red {
+    color: red;
+}
+
+/****display****/
+.c-inlineBlock {
+    display: inline-block;
+}
+
+/*===========================================
+ * 共用列表
+ *===========================================*/
 .c-ol,
 .c-ul {
     display: block;
@@ -296,7 +325,10 @@ textarea::-webkit-scrollbar-thumb {
     overflow: hidden;
 }
 
-/****共用choose容器****/
+
+/*===========================================
+ * 共用choose容器
+ *===========================================*/
 .c-chooseBox {
     display: flex;
     flex-wrap: wrap;
@@ -344,13 +376,10 @@ textarea::-webkit-scrollbar-thumb {
     flex: 0 1 auto;
 }
 
-/****wow****/
-.wow {
-    opacity: 0;
-    animation: 1s .4s ease-in-out forwards;
-    visibility: hidden;
-}
 
+/*===========================================
+ * 共用零件
+ *===========================================*/
 /****錨點****/
 .c-anchor {
     position: absolute;
@@ -365,7 +394,7 @@ textarea::-webkit-scrollbar-thumb {
     visibility: hidden;
 }
 
-/****共用樣式****/
+/****切換chechbox****/
 .c-toggleBox {
     position: fixed;
     top: 0;
@@ -382,10 +411,7 @@ textarea::-webkit-scrollbar-thumb {
     overflow: hidden;
 }
 
-.c-inlineBlock {
-    display: inline-block;
-}
-
+/****youtube容器****/
 .c-youtube {
     display: block;
     width: 100%;
@@ -401,6 +427,7 @@ textarea::-webkit-scrollbar-thumb {
     margin: 0 auto;
 }
 
+/****recaptcha****/
 .c-recaptcha {
     display: block;
     width: 304px;
@@ -408,13 +435,13 @@ textarea::-webkit-scrollbar-thumb {
     flex: 0 0 auto;
 }
 
-/****共用日期****/
+/****日期****/
 .c-date {
     display: block;
     width: 100%;
 }
 
-/****共用標籤****/
+/****標籤****/
 .c-tag {
     display: flex;
     align-items: flex-start;
@@ -512,12 +539,18 @@ textarea::-webkit-scrollbar-thumb {
         --headerHeight: 80px;
     }
 
+    /*===========================================
+     * 共用零件
+     *===========================================*/
     /****共用banner****/
 
 }
 
 @media screen and (max-width: 767px) {
 
+    /*===========================================
+     * 共用零件
+     *===========================================*/
     /****查無資料****/
     .c-nodata {
         padding: 80px 0;
@@ -530,6 +563,9 @@ textarea::-webkit-scrollbar-thumb {
         --headerHeight: 60px;
     }
 
+    /*===========================================
+     * 共用零件
+     *===========================================*/
     /****共用banner****/
 }
 
