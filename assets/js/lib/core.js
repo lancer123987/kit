@@ -733,6 +733,46 @@ function observeInfAnim() {
 }
 
 
+/**
+ * 視差滾動進度計算
+ *
+ * @access  public
+ *
+ * @param   {Object}      config
+ * @param   {HTMLElement} config.childEl    偵測目標元素
+ * @param   {string}      config.startMode  起始模式（預設 'bottom'）
+ * @param   {string}      config.endMode    結束模式（預設 'top'）
+ *
+ * @return  {number}  progress 0~1
+ */
+function getParallaxPercent(config) {
+    const {
+        childEl,
+        startMode = 'bottom',
+        endMode   = 'top',
+    } = config;
+
+    if (!(childEl instanceof HTMLElement)) {
+        return devError('[getParallaxPercent] config.childEl must be a valid HTMLElement.');
+    }
+
+    return function onScroll() {
+        const rect   = childEl.getBoundingClientRect();
+        const vh     = window.innerHeight;
+        const childH = childEl.offsetHeight;
+
+        /* 起始點（progress = 0 時，rect.top 的位置） */
+        const startY = 'top' === startMode ? vh : vh + childH;
+
+        /* 結束點（progress = 1 時，rect.top 的位置） */
+        const endY = 'bottom' === endMode ? childH * -1 : 0;
+
+        return clamp(0, (startY - rect.top) / (startY - endY), 1);
+    };
+}
+
+
+
 
 /**========================================================================
  *
