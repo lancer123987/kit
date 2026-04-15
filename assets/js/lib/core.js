@@ -738,18 +738,18 @@ function observeInfAnim() {
  *
  * @access  public
  *
- * @param   {Object}      config
- * @param   {HTMLElement} config.childEl    偵測目標元素
- * @param   {string}      config.startMode  起始模式（預設 'bottom'）
- * @param   {string}      config.endMode    結束模式（預設 'top'）
+ * @param   {Object}              config
+ * @param   {HTMLElement|jQuery}  config.childEl    偵測目標元素
+ * @param   {string}              config.startMode  起始模式（預設 'bottom'）
+ * @param   {string}              config.endMode    結束模式（預設 'top'）
  *
  * @return  {number}  progress 0~1
  */
 function getParallaxPercent(config) {
-    const {
+    let {
         childEl,
         startMode = 'bottom',
-        endMode   = 'top',
+        endMode = 'top',
     } = config;
 
     /* jQuery 確認 */
@@ -761,19 +761,19 @@ function getParallaxPercent(config) {
         return devError('[getParallaxPercent] config.childEl must be a valid HTMLElement.');
     }
 
-    return function onScroll() {
-        const rect   = childEl.getBoundingClientRect();
-        const vh     = window.innerHeight;
-        const childH = childEl.offsetHeight;
+    let rect = childEl.getBoundingClientRect();
+    let vh = window.innerHeight;
+    let childH = childEl.offsetHeight;
 
-        /* 起始點（progress = 0 時，rect.top 的位置） */
-        const startY = 'top' === startMode ? vh : vh + childH;
+    /* 起始點（progress = 0 時，rect.top 的位置） */
+    let startY = 'top' === startMode ? vh : vh + childH;
 
-        /* 結束點（progress = 1 時，rect.top 的位置） */
-        const endY = 'bottom' === endMode ? childH * -1 : 0;
+    /* 結束點（progress = 1 時，rect.top 的位置） */
+    let endY = 'bottom' === endMode ? childH * -1 : 0;
 
-        return clamp(0, (startY - rect.top) / (startY - endY), 1);
-    };
+    let rate = clamp(0, (startY - rect.top) / (startY - endY), 1);
+
+    return rate;
 }
 
 
