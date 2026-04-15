@@ -752,6 +752,11 @@ function getParallaxPercent(config) {
         endMode   = 'top',
     } = config;
 
+    /* jQuery 確認 */
+    if (window.jQuery && childEl instanceof jQuery) {
+        childEl = childEl[0];
+    }
+
     if (!(childEl instanceof HTMLElement)) {
         return devError('[getParallaxPercent] config.childEl must be a valid HTMLElement.');
     }
