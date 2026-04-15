@@ -740,16 +740,14 @@ function observeInfAnim() {
  *
  * @param   {Object}              config
  * @param   {HTMLElement|jQuery}  config.childEl    偵測目標元素
- * @param   {string}              config.startMode  起始模式（預設 'bottom'）
- * @param   {string}              config.endMode    結束模式（預設 'top'）
+ * @param   {string}              config.startMode  起始模式（預設 'bottom'
  *
  * @return  {number}  progress 0~1
  */
 function getParallaxPercent(config) {
     let {
         childEl,
-        startMode = 'bottom',
-        endMode = 'top',
+        startMode = 'bottom'
     } = config;
 
     /* jQuery 確認 */
@@ -761,17 +759,24 @@ function getParallaxPercent(config) {
         return devError('[getParallaxPercent] config.childEl must be a valid HTMLElement.');
     }
 
-    let rect = childEl.getBoundingClientRect();
+    let parentEl = childEl.parentElement;
+
+    if (!(parentEl instanceof HTMLElement)) {
+        return devError('[getParallaxPercent] childEl must have a valid parent HTMLElement.');
+    }
+
+    let stickyTop = parseFloat(getComputedStyle(childEl).top) || 0;
+    let parentRect = parentEl.getBoundingClientRect();
     let vh = window.innerHeight;
+    let parentH = parentEl.offsetHeight;
     let childH = childEl.offsetHeight;
 
-    /* 起始點（progress = 0 時，rect.top 的位置） */
-    let startY = 'top' === startMode ? vh : vh + childH;
+    /* progress = 0 時，parentRect.top 的值 */
+    let startY = 'top' === startMode ? -stickyTop : vh - stickyTop;
 
-    /* 結束點（progress = 1 時，rect.top 的位置） */
-    let endY = 'bottom' === endMode ? childH * -1 : 0;
-
-    let rate = clamp(0, (startY - rect.top) / (startY - endY), 1);
+    /* progress = 1 時，parentRect.top 的值 */
+    let endY = stickyTop + childH - parentH;
+    let rate = clamp(0, (parentRect.top - startY) / (endY - startY), 1);
 
     return rate;
 }
