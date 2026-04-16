@@ -433,6 +433,38 @@ function getHashKey() {
 }
 
 
+/**
+ * 解封 jQuery 物件以取得原生 DOM 元素
+ *
+ * @access    public
+ *
+ * @param     {HTMLElement|jQuery}  el  目標元素
+ *
+ * @return    {HTMLElement|null}
+ */
+function unwrapjQuery(el) {
+    if ('undefined' !== typeof jQuery && el instanceof jQuery) {
+        return el[0] || null;
+    }
+
+    return el;
+}
+
+
+/**
+ * 確保回傳 jQuery 物件
+ *
+ * @access    public
+ *
+ * @param {HTMLElement|jQuery}  el  目標元素
+ *
+ * @return {jQuery}
+ */
+function wrapjQuery(el) {
+    return (el instanceof jQuery) ? el : jQuery(el);
+}
+
+
 
 
 /**========================================================================
@@ -742,7 +774,7 @@ function observeInfAnim() {
  * @param   {HTMLElement|jQuery}  config.childEl    偵測目標元素
  * @param   {string}              config.startMode  起始模式（預設 'bottom'
  *
- * @return  {number}  progress 0~1
+ * @return  {number}                                progress 0~1
  */
 function getParallaxPercent(config) {
     let {
@@ -751,9 +783,7 @@ function getParallaxPercent(config) {
     } = config;
 
     /* jQuery 確認 */
-    if (window.jQuery && childEl instanceof jQuery) {
-        childEl = childEl[0];
-    }
+    childEl = unwrapjQuery(childEl);
 
     if (!(childEl instanceof HTMLElement)) {
         return devError('[getParallaxPercent] config.childEl must be a valid HTMLElement.');
