@@ -5,6 +5,18 @@
     --textColor: #d8dce8;
 }
 
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    width: 6px;
+    background: #0b0d15;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .12);
+}
+
 body {
     background: var(--bgColor);
     font-size: 15px;
