@@ -3,6 +3,8 @@
 :root {
     --bgColor: #0f111a;
     --textColor: #d8dce8;
+    ---borderColor: rgba(255, 255, 255, .08);
+    --asideW: 260px;
 }
 
 html::-webkit-scrollbar,
@@ -36,6 +38,75 @@ body::before {
     opacity: .025;
     pointer-events: none;
     z-index: 0;
+}
+
+header,
+footer {
+    display: none;
+}
+
+.main {
+    display: block;
+    width: 100%;
+    padding: 0 0 0 var(--asideW);
+    overflow: hidden;
+}
+
+/*===========================================
+ * 零件樣式
+ *===========================================*/
+input {
+    width: 100%;
+    height: 35px;
+    padding: 0 10px 0 30px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, .8);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: rgba(255, 255, 255, .06);
+}
+
+/*===========================================
+ * 側欄
+ *===========================================*/
+.c-aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block;
+    width: var(--asideW);
+    height: 100%;
+    max-width: 100%;
+    border-right: 1px solid rgba(255, 255, 255, .06);
+    background: rgba(18, 20, 32, .7);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+}
+
+.c-aside__search {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-top: 1px solid var(---borderColor);
+    border-bottom: 1px solid var(---borderColor);
+}
+
+.c-aside__search::before {
+    content: '⌕';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 100%;
+    font-size: 13px;
+    line-height: 1;
+    color: rgba(255, 255, 255, .3);
+    pointer-events: none;
 }
 
 @media screen and (max-width: 991px) {}
