@@ -293,7 +293,31 @@ input {
     margin: 0;
 }
 
-.c-aside__menu__link {
+.c-aside__menu__box {
+    display: block;
+    width: 100%;
+}
+
+.c-aside__menu__box:not(.show) {
+    display: none;
+}
+
+.c-aside__menu__box__title {
+    display: block;
+    width: 100%;
+    margin: 0 0 5px 0;
+    padding: 0 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #fff;
+    opacity: .5;
+}
+
+.c-aside__menu__box__title:last-child {
+    margin: 0;
+}
+
+.c-aside__menu__box__link {
     display: block;
     width: 100%;
     padding: 5px 10px;
@@ -362,7 +386,6 @@ input {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .08em;
-    text-transform: uppercase;
     color: var(--accentColor);
 }
 
