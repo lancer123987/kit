@@ -31,14 +31,26 @@
 <head></head>
 <body>
     <header></header>
-    <main>
+    <div class="c-light"></div>
+    <main>        
         <input id="asideCheck" class="c-toggleBox" type="checkbox" aria-hidden="true">
+        <label class="aside-open" for="asideCheck"></label> 
         <aside class="c-aside">
-            <div class="c-aside__search">
-                <input class="j-search" type="text" placeholder="搜尋功能" autocomplete="off">
+            <div class="c-aside__head">            
+                <label class="c-aside-close" for="asideCheck"></label> 
+                <div class="c-aside__head__content">
+                    <p class="c-aside__head__content__title">Lancer's kit</p>
+                    <p class="c-aside__head__content__text">工具說明書</p>
+                </div>
             </div>
+            <!-- <div class="c-aside__search">
+                <input class="j-search" type="text" placeholder="搜尋功能" autocomplete="off">
+            </div> -->
+            <div class="c-aside__menu j-aside-menu"></div>
         </aside>
-        <div></div>
+        <div class="main">
+            <div class="manual j-manual"></div>
+        </div>
     </main>
     <footer></footer>
 </body>
@@ -63,6 +75,10 @@
     </div>
 </div>
 <link rel="stylesheet" href="assets/css/common/footer.css">
+<script src="assets/js/lib/jquery-3.7.1.min.js"></script>
 <script src="assets/js/lib/core.js"></script>
 <script src="assets/js/common/common.js"></script>
+<script src="assets/js/template/core-template.js"></script>
+<script src="assets/js/template/slick-plugi-template.js"></script>
+<script src="assets/js/manual-handle.js"></script>
 </html>
