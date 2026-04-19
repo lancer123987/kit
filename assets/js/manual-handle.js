@@ -1,30 +1,29 @@
 /**========================================================================
  *
  * @description 說明書主控邏輯
- * @version     1.0.0
+ * @version     2.0.0
  * @dependency  core.js, core-template.js, slick-plugi-template.js
  *
- * 本檔負責：
+ * 負責：
  *   1. 讀取各 template JS 注入的 window.DOCS_NAV
- *   2. 渲染側欄導覽
- *   3. 切換主內容（clone <template> 元素）
- *   4. 搜尋過濾
- *
+ *   2. 渲染側欄導覽（group → sub → link）
+ *   3. 切換主內容 + 錨點捲動
+ *   4. 搜尋過濾（link 層級，box 為顯隱單位）
  *
  * ★ 新增頁面：不需修改本檔
- *   → 只需在對應的 template JS 新增 nav 項目與 HTML 內容
+ *   → 只需在對應 template JS 新增 NAV 資料與 HTML 內容
  *
  *========================================================================*/
 
 (function () {
 
-    /* 目前顯示的頁面 id */
+    /* 目前載入的頁面 id */
     let currentId = '';
 
 
     /**
      * 渲染側欄導覽
-     * 依 window.DOCS_NAV 順序產生群組與連結，相同 group 自動合併
+     * 依 window.DOCS_NAV 格式：[{ group, subs: [{ sub, links: [{ id, anchor, label, keywords }] }] }]
      *
      * @return {void}
      */
@@ -32,90 +31,132 @@
         const $menu  = document.querySelector('.j-aside-menu');
         const navList = window.DOCS_NAV || [];
 
-        /* 依 group 合併，保留順序 */
-        const groups     = {};
-        const groupOrder = [];
-
-        navList.forEach((item) => {
-            if (!groups[item.group]) {
-                groups[item.group] = [];
-                groupOrder.push(item.group);
-            }
-            groups[item.group].push(item);
-        });
-
-        /* 產生 DOM */
-        groupOrder.forEach((groupName) => {
-            const $box = document.createElement('div');
-            $box.className = 'c-aside__menu__box show';
-
+        navList.forEach((groupData) => {
+            /* group title */
             const $title = document.createElement('p');
             $title.className   = 'c-aside__menu__title';
-            $title.textContent = groupName;
-            $box.appendChild($title);
+            $title.textContent = groupData.group;
+            $menu.appendChild($title);
 
-            groups[groupName].forEach((item) => {
-                const $link = document.createElement('a');
-                $link.className        = 'c-aside__menu__link';
-                $link.dataset.target   = item.id;
-                $link.dataset.keywords = item.keywords || '';
-                $link.textContent      = item.label;
-                $link.href             = 'javascript:;';
+            /* subs */
+            groupData.subs.forEach((subData) => {
+                const $box = document.createElement('div');
+                $box.className = 'c-aside__menu__box show';
 
-                $link.addEventListener('click', () => {
-                    showSection(item.id);
+                /* sub title */
+                const $subTitle = document.createElement('p');
+                $subTitle.className   = 'c-aside__menu__box__title';
+                $subTitle.textContent = subData.sub;
+                $box.appendChild($subTitle);
+
+                /* links */
+                subData.links.forEach((item) => {
+                    const $link = document.createElement('a');
+                    $link.className        = 'c-aside__menu__box__link c-aside__menu__link';
+                    $link.href             = 'javascript:;';
+                    $link.textContent      = item.label;
+                    $link.dataset.id       = item.id;
+                    $link.dataset.anchor   = item.anchor || '';
+                    $link.dataset.keywords = item.keywords || '';
+
+                    $link.addEventListener('click', () => {
+                        showSection(item.id, item.anchor || '');
+                    });
+
+                    $box.appendChild($link);
                 });
 
-                $box.appendChild($link);
+                $menu.appendChild($box);
             });
-
-            $menu.appendChild($box);
         });
 
         /* 預設顯示第一項 */
-        if (navList.length) {
-            currentId = navList[0].id;
-            showSection(currentId);
+        const firstLink = navList[0] && navList[0].subs[0] && navList[0].subs[0].links[0];
+        if (firstLink) {
+            showSection(firstLink.id, firstLink.anchor || '');
         }
     }
 
 
     /**
-     * 切換主內容
-     * 從 <template id="tpl-{targetId}"> clone 內容後渲染至 .j-manual
+     * 切換主內容並捲動至錨點
+     * 同頁面只捲動，不重新 clone template
      *
-     * @param {string} targetId
+     * @param {string} id      template id
+     * @param {string} anchor  頁內錨點 id（可為空字串）
      * @return {void}
      */
-    function showSection(targetId) {
-        const $tpl = document.getElementById('tpl-' + targetId);
-        if (!$tpl) {
-            devWarn('[manual-handle] template not found: tpl-' + targetId);
+    function showSection(id, anchor) {
+        /* 同頁面 → 只捲動 + 更新 active */
+        if (id === currentId) {
+            if (anchor) {
+                scrollToAnchor(anchor);
+            } else {
+                window.scrollTo(0, 0);
+            }
+            updateActive(id, anchor);
             return;
         }
 
-        /* 渲染內容 */
+        const $tpl = document.getElementById('tpl-' + id);
+        if (!$tpl) {
+            devWarn('[manual-handle] template not found: tpl-' + id);
+            return;
+        }
+
+        /* clone template 渲染 */
         const $manual = document.querySelector('.j-manual');
         $manual.innerHTML = '';
         $manual.appendChild($tpl.content.cloneNode(true));
 
-        /* 更新 nav 狀態 */
+        currentId = id;
+        updateActive(id, anchor);
+
+        if (anchor) {
+            /* 等 DOM 渲染後才捲 */
+            setTimeout(() => { scrollToAnchor(anchor); }, 50);
+        } else {
+            window.scrollTo(0, 0);
+        }
+    }
+
+
+    /**
+     * 捲動至頁內錨點
+     *
+     * @param {string} anchor  目標元素 id
+     * @return {void}
+     */
+    function scrollToAnchor(anchor) {
+        const el = document.getElementById(anchor);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+
+    /**
+     * 更新側欄 active 狀態
+     *
+     * @param {string} id
+     * @param {string} anchor
+     * @return {void}
+     */
+    function updateActive(id, anchor) {
         document.querySelectorAll('.c-aside__menu__link').forEach((el) => {
             el.classList.remove('active');
         });
 
-        const $activeLink = document.querySelector('.c-aside__menu__link[data-target="' + targetId + '"]');
-        if ($activeLink) $activeLink.classList.add('active');
-
-        currentId = targetId;
-        window.scrollTo(0, 0);
+        let selector = '.c-aside__menu__link[data-id="' + id + '"][data-anchor="' + (anchor || '') + '"]';
+        const $active = document.querySelector(selector);
+        if ($active) $active.classList.add('active');
     }
 
 
     /**
      * 搜尋過濾
-     * 符合條件的群組加 .show，link 用 display 控制顯隱
-     * 「找不到」訊息由 CSS :not(:has(.show))::after 負責，JS 不處理
+     * 逐 link 比對，box 為顯隱單位
+     * 「找不到」由 CSS :not(:has(.show))::after 負責，JS 不處理
      *
      * @return {void}
      */
@@ -124,33 +165,33 @@
         if (!$input) return;
 
         $input.addEventListener('input', function () {
-            const query   = this.value.trim().toLowerCase();
-            const $groups = document.querySelectorAll('.c-aside__menu__box');
+            const query  = this.value.trim().toLowerCase();
+            const $boxes = document.querySelectorAll('.c-aside__menu__box');
 
-            /* 清空狀態 */
+            /* 清空 → 全部顯示 */
             if (!query) {
-                $groups.forEach((g) => {
-                    g.classList.add('show');
-                    g.querySelectorAll('.c-aside__menu__link').forEach((el) => {
-                        el.style.display = '';
+                $boxes.forEach((box) => {
+                    box.classList.add('show');
+                    box.querySelectorAll('.c-aside__menu__box__link').forEach((link) => {
+                        link.style.display = '';
                     });
                 });
                 return;
             }
 
-            $groups.forEach((group) => {
-                let groupHit = false;
+            $boxes.forEach((box) => {
+                let boxHit = false;
 
-                group.querySelectorAll('.c-aside__menu__link').forEach((item) => {
-                    const label    = item.textContent.toLowerCase();
-                    const keywords = (item.dataset.keywords || '').toLowerCase();
+                box.querySelectorAll('.c-aside__menu__box__link').forEach((link) => {
+                    const label    = link.textContent.toLowerCase();
+                    const keywords = (link.dataset.keywords || '').toLowerCase();
                     const hit      = label.includes(query) || keywords.includes(query);
-                    item.style.display = hit ? '' : 'none';
-                    if (hit) groupHit = true;
+                    link.style.display = hit ? '' : 'none';
+                    if (hit) boxHit = true;
                 });
 
-                /* .show 控制群組顯隱，CSS :has() 依此判斷是否顯示「找不到」 */
-                group.classList.toggle('show', groupHit);
+                /* .show 控制 box 顯隱，CSS :has() 依此判斷「找不到」 */
+                box.classList.toggle('show', boxHit);
             });
         });
     }
