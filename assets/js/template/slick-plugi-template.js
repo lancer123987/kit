@@ -121,7 +121,7 @@
     <h2 class="m-h2">完整範例</h2>
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
-        <pre class="m-codeblock__pre"><span class="t-fn">$</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">initSlick</span>({
+        <pre class="m-codeblock__pre"><span class="t-fn">jQuery</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">initSlick</span>({
     settings: {
         slidesToShow:  <span class="t-num">1</span>,
         autoplay:      <span class="t-bool">true</span>,
@@ -177,14 +177,14 @@
 
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
-        <pre class="m-codeblock__pre"><span class="t-fn">$</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">destroySlick</span>();
+        <pre class="m-codeblock__pre"><span class="t-fn">jQuery</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">destroySlick</span>();
 
 <span class="t-cmt">/* RWD：依視窗寬度決定是否初始化 */</span>
 <span class="t-prop">ResizeHandler</span>.<span class="t-fn">init</span>(() => {
     <span class="t-kw">if</span> (<span class="t-num">768</span> > window.innerWidth) {
-        <span class="t-fn">$</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">initSlick</span>({ <span class="t-cmt">/* ... */</span> });
+        <span class="t-fn">jQuery</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">initSlick</span>({ <span class="t-cmt">/* ... */</span> });
     } <span class="t-kw">else</span> {
-        <span class="t-fn">$</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">destroySlick</span>();
+        <span class="t-fn">jQuery</span>(<span class="t-str">'.j-slider'</span>).<span class="t-fn">destroySlick</span>();
     }
 });</pre>
     </div>

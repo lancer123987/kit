@@ -187,7 +187,7 @@ $element.<span class="t-fn">isSticky</span>(): <span class="t-kw">boolean</span>
 <span class="t-kw">if</span> (header.<span class="t-fn">isSticky</span>()) { <span class="t-cmt">/* 已釘住 */</span> }
 
 <span class="t-cmt">/* jQuery */</span>
-<span class="t-kw">if</span> (<span class="t-fn">$</span>(<span class="t-str">'header'</span>).<span class="t-fn">isSticky</span>()) { <span class="t-cmt">/* 已釘住 */</span> }</pre>
+<span class="t-kw">if</span> (<span class="t-fn">jQuery</span>(<span class="t-str">'header'</span>).<span class="t-fn">isSticky</span>()) { <span class="t-cmt">/* 已釘住 */</span> }</pre>
     </div>
 </article>`,
 
@@ -293,7 +293,7 @@ $element.<span class="t-fn">isSticky</span>(): <span class="t-kw">boolean</span>
     <p class="m-p">若傳入的是 jQuery 物件，回傳其第一個原生 DOM 元素（<code class="m-code">el[0]</code>）；若已是原生元素則直接回傳。找不到元素時回傳 <code class="m-code">null</code>。</p>
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
-        <pre class="m-codeblock__pre"><span class="t-kw">const</span> el = <span class="t-fn">unwrapjQuery</span>(<span class="t-fn">$</span>(<span class="t-str">'.j-box'</span>));
+        <pre class="m-codeblock__pre"><span class="t-kw">const</span> el = <span class="t-fn">unwrapjQuery</span>(<span class="t-fn">jQuery</span>(<span class="t-str">'.j-box'</span>));
 el.<span class="t-fn">getBoundingClientRect</span>();</pre>
     </div>
 
