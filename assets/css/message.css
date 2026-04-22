@@ -1,9 +1,19 @@
 @charset "UTF-8";
 
+header,
+footer {
+    display: none;
+}
+
 .message {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
     padding: 150px 0;
-    min-height: calc(100vh - 500px);
+    min-height: var(--screenHeight);
 }
 
 .message__text {
