@@ -519,7 +519,7 @@ $el.<span class="t-fn">addClass</span>(<span class="t-str">'active'</span>);</pr
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">html</span></div>
         <pre class="m-codeblock__pre">&lt;<span class="t-kw">select</span> <span class="t-prop">onchange</span>=<span class="t-str">"handleSelectLinkChange(this)"</span>&gt;
-    &lt;<span class="t-kw">option</span> <span class="t-prop">value</span>=<span class="t-str">""</span>       <span class="t-prop">data-stop</span>=<span class="t-str">"1"</span>&gt;請選擇&lt;/<span class="t-kw">option</span>&gt;
+    &lt;<span class="t-kw">option</span> <span class="t-prop">value</span>=<span class="t-str">""</span> <span class="t-prop">data-stop</span>=<span class="t-str">"1"</span>&gt;請選擇&lt;/<span class="t-kw">option</span>&gt;
     &lt;<span class="t-kw">option</span> <span class="t-prop">value</span>=<span class="t-str">"/about"</span>&gt;關於我們&lt;/<span class="t-kw">option</span>&gt;
     &lt;<span class="t-kw">option</span> <span class="t-prop">value</span>=<span class="t-str">"https://example.com"</span> <span class="t-prop">data-blank</span>=<span class="t-str">"1"</span>&gt;外部連結&lt;/<span class="t-kw">option</span>&gt;
 &lt;/<span class="t-kw">select</span>&gt;</pre>
