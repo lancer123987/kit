@@ -979,8 +979,8 @@ function actionLightbox(e, action = 'close') {
 function handleSelectLinkChange($select) {
     let selectedOption = $select.options[$select.selectedIndex];
     let value = $select.value;
-    let isBlank = selectedOption.dataset.blank || 0;
-    let isStop = selectedOption.dataset.stop || 0;
+    let isBlank = +selectedOption.dataset.blank || 0;
+    let isStop = +selectedOption.dataset.stop || 0;
 
     if (isStop) return;
 
