@@ -1167,3 +1167,49 @@ function initCopyAction() {
         }
     }
 }
+
+
+
+
+/**========================================================================
+ *
+ * @description API呼叫
+ *
+ * ========================================================================*/
+
+/**
+ * 建立 Promise 封裝的非同步機制
+ *
+ * @access    public
+ *
+ * @param     {string}   url    請求網址
+ * @param     {Object}   data   資料物件
+ *
+ * @return    {Promise}
+ */
+const makeFetchPromise = (url, data) => {
+    return new Promise((resolve, reject) => {
+        fetch(url, {
+            method: 'POST',
+            cache: 'no-cache',
+            body: data
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('連線失敗');
+            }
+            return response.json();
+        })
+        .then((respon) => {
+            if (respon && respon.data) {
+                resolve(respon.data);
+            } else {
+                reject(new Error('AJAX 錯誤：沒有取得有效資料'));
+            }
+        })
+        .catch((error) => {
+            /* 防止 Promise 懸掛 */
+            reject(error);
+        });
+    });
+};
