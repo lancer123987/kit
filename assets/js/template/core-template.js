@@ -74,6 +74,12 @@
                 ]
             },
             {
+                sub: 'API 呼叫',
+                links: [
+                    { id: 'core-api', anchor: 'makeFetchPromise', label: 'makeFetchPromise()', keywords: 'makeFetchPromise fetch API ajax promise post 非同步 請求' }
+                ]
+            },
+            {
                 sub: '介面行為控制',
                 links: [
                     { id: 'core-ui', anchor: 'scrollToTop',            label: 'scrollToTop()',            keywords: 'scrollToTop 回到頂部 捲動 scroll top' },
@@ -439,6 +445,57 @@ $el.<span class="t-fn">addClass</span>(<span class="t-str">'active'</span>);</pr
     <div class="m-callout m-callout--warn">
         <span class="m-callout__icon">⚠</span>
         <p><code class="m-code">childEl</code> 必須是設定了 <code class="m-code">position: sticky</code> 的元素且需要有父層容器作為捲動範圍。傳入非 <code class="m-code">HTMLElement</code> 的值會觸發 <code class="m-code">devError</code> 並回傳 <code class="m-code">undefined</code>。</p>
+    </div>
+</article>`,
+
+        'core-api': `
+<article class="m-section">
+    <span class="m-tag">core.js</span>
+    <h1 class="m-h1">API 呼叫</h1>
+    <p class="m-lead">封裝 <code class="m-code">fetch</code> 的非同步請求工具，統一處理連線失敗、資料驗證與 Promise 回傳。</p>
+
+    <h2 id="makeFetchPromise" class="m-h2">makeFetchPromise()</h2>
+    <div class="m-signature"><span class="t-fn">makeFetchPromise</span>(<span class="t-prop">url</span>: <span class="t-kw">string</span>, <span class="t-prop">data</span>: <span class="t-kw">FormData | object</span>): <span class="t-kw">Promise</span></div>
+    <p class="m-p">以 POST 方式送出請求，回傳 Promise。resolve 時提供 <code class="m-code">response.data</code>，伺服器回傳格式需包含 <code class="m-code">{ data: ... }</code>，否則 reject。</p>
+
+    <table class="m-table">
+        <thead><tr><th>參數</th><th>型別</th><th>說明</th></tr></thead>
+        <tbody>
+            <tr><td><code class="m-code">url</code><span class="m-req">必填</span></td><td><span class="m-type">string</span></td><td>請求目標網址。</td></tr>
+            <tr><td><code class="m-code">data</code><span class="m-req">必填</span></td><td><span class="m-type">FormData | object</span></td><td>POST 送出的資料主體。</td></tr>
+        </tbody>
+    </table>
+
+    <h3 class="m-h3">resolve / reject 條件</h3>
+    <table class="m-table">
+        <thead><tr><th>情況</th><th>結果</th><th>說明</th></tr></thead>
+        <tbody>
+            <tr><td>HTTP status OK，且有 <code class="m-code">data</code> 欄位</td><td>resolve(<code class="m-code">respon.data</code>)</td><td>正常回傳。</td></tr>
+            <tr><td>HTTP status OK，但無 <code class="m-code">data</code> 欄位</td><td>reject(<code class="m-code">Error</code>)</td><td>AJAX 錯誤：沒有取得有效資料。</td></tr>
+            <tr><td>HTTP status 非 OK（4xx / 5xx）</td><td>reject(<code class="m-code">Error</code>)</td><td>連線失敗。</td></tr>
+            <tr><td>網路中斷 / 其他例外</td><td>reject(<code class="m-code">Error</code>)</td><td>catch 攔截後 reject，防止 Promise 懸掛。</td></tr>
+        </tbody>
+    </table>
+
+    <div class="m-codeblock">
+        <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
+        <pre class="m-codeblock__pre"><span class="t-kw">const</span> formData = <span class="t-kw">new</span> <span class="t-fn">FormData</span>();
+formData.<span class="t-fn">append</span>(<span class="t-str">'name'</span>, <span class="t-str">'Lancer'</span>);
+
+<span class="t-fn">makeFetchPromise</span>(<span class="t-str">'/api/submit'</span>, formData)
+    .<span class="t-fn">then</span>((data) => {
+        <span class="t-cmt">/* 成功：data 為伺服器回傳的 response.data */</span>
+        console.<span class="t-fn">log</span>(data);
+    })
+    .<span class="t-fn">catch</span>((error) => {
+        <span class="t-cmt">/* 失敗：連線失敗或資料格式錯誤 */</span>
+        <span class="t-fn">setDialog</span>(<span class="t-str">'alert'</span>, { content: error.message });
+    });</pre>
+    </div>
+
+    <div class="m-callout m-callout--warn">
+        <span class="m-callout__icon">⚠</span>
+        <p>伺服器回應的 JSON 格式必須包含 <code class="m-code">data</code> 欄位，例如 <code class="m-code">{ "data": { ... } }</code>，否則視為失敗並觸發 reject。</p>
     </div>
 </article>`,
 
