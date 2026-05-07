@@ -821,6 +821,73 @@ function getParallaxPercent(config) {
  * ========================================================================*/
 
 /**
+ * 平滑捲動至指定座標 (使用 requestAnimationFrame)
+ *
+ * @access    public
+ *
+ * @param     {number}  targetPos  目標 Y 軸座標
+ * @param     {number}  duration   動畫持續時間 (ms)
+ *
+ * @return    {void}
+ */
+function smoothScrollTo(targetPos, duration = 1000) {
+    if (smoothScrollTo._rafId) {
+        cancelAnimationFrame(smoothScrollTo._rafId);
+        smoothScrollTo._rafId = null;
+    }
+
+    let startPos = window.pageYOffset;
+    let distance = targetPos - startPos;
+    let startTime = null;
+
+    /**
+     * 二次方緩動公式 (Ease-in-out)
+     *
+     * @param {number} t - 當前時間
+     * @param {number} b - 起始位置
+     * @param {number} c - 總位移量
+     * @param {number} d - 總持續時間
+     * @return {number}
+     */
+    let easeInOutQuad = (t, b, c, d) => {
+        t /= d / 2;
+        if (t < 1) {
+            return (c / 2) * t * t + b;
+        }
+        t--;
+        return (-c / 2) * (t * (t - 2) - 1) + b;
+    };
+
+
+    /**
+     * 執行補間動畫幀
+     *
+     * @param {number} currentTime - 當前時間戳
+     * @return {void}
+     */
+    let animation = (currentTime) => {
+        if (null === startTime) {
+            startTime = currentTime;
+        }
+
+        let timeElapsed = currentTime - startTime;
+        let run = easeInOutQuad(timeElapsed, startPos, distance, duration);
+
+        window.scrollTo(0, run);
+
+        if (timeElapsed < duration) {
+            smoothScrollTo._rafId = requestAnimationFrame(animation);
+        } else {
+            window.scrollTo(0, targetPos);
+            smoothScrollTo._rafId = null;
+        }
+    };
+
+    smoothScrollTo._rafId = requestAnimationFrame(animation);
+}
+
+
+/**
  * 返回頂部
  *
  * @access    public
@@ -830,43 +897,7 @@ function getParallaxPercent(config) {
  * @return    {void}
  */
 function scrollToTop(speed = 1000) {
-    /* 頂部不執行 */
-    if (0 === window.scrollY) return;
-
-    let animationFrameId;
-    const start = window.scrollY;
-    const startTime = performance.now();
-
-    /* 動態每一影格的執行動作 */
-    function step(now) {
-        const elapsed = now - startTime;
-        const progress = speed > 0 ? Math.min(elapsed / speed, 1) : 1;
-
-        window.scrollTo(0, start * (1 - progress));
-
-        if (1 > progress) {
-            animationFrameId = requestAnimationFrame(step);
-        } else {
-            stopInteracting();
-        }
-    }
-
-    /* 停止動作 + 移除監聽器 */
-    function stopInteracting() {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        window.removeEventListener('wheel', stopInteracting);
-        window.removeEventListener('touchstart', stopInteracting);
-    }
-
-    /* 監聽使用者交互行為 */
-    window.addEventListener('wheel', stopInteracting, {
-        passive: true
-    });
-    window.addEventListener('touchstart', stopInteracting, {
-        passive: true
-    });
-
-    animationFrameId = requestAnimationFrame(step);
+    smoothScrollTo(0, speed);
 }
 
 
@@ -881,55 +912,17 @@ function scrollToTop(speed = 1000) {
  * @return    {void}
  */
 function scrollDown(isHeader = false, speed = 800) {
-    const scrollItem = document.querySelector('.j-scrollItem');
-    if (!scrollItem) return;
+    let offset = 0;
 
-    /* 計算目標位置 (絕對座標) */
-    const targetTop = scrollItem.getBoundingClientRect().top + window.scrollY + scrollItem.offsetHeight;
-
-    let headHeight = 0;
     if (isHeader) {
-        const header = document.querySelector('header');
-        headHeight = header ? header.offsetHeight : 0;
+        let $header = jQuery('header');
+        offset = (0 < $header.length) ? $header.outerHeight() : parseInt(getComputedStyle(document.documentElement).getPropertyValue('--headerHeight')) || 0;
     }
 
-    const finalPosition = targetTop - headHeight;
-    const startPosition = window.scrollY;
-    const distance = finalPosition - startPosition;
+    let windowHeight = window.innerHeight;
+    let targetPos = window.pageYOffset + windowHeight - offset;
 
-    let animationFrameId;
-    const startTime = performance.now();
-
-    /* 停止動作 + 移除監聽器 */
-    function stopInteracting() {
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        window.removeEventListener('wheel', stopInteracting);
-        window.removeEventListener('touchstart', stopInteracting);
-    }
-
-    function step(now) {
-        const elapsed = now - startTime;
-        const progress = speed > 0 ? Math.min(elapsed / speed, 1) : 1;
-
-        /* 執行捲動 */
-        window.scrollTo(0, startPosition + (distance * progress));
-
-        if (1 > progress) {
-            animationFrameId = requestAnimationFrame(step);
-        } else {
-            stopInteracting();
-        }
-    }
-
-    /* 監聽介入行為 */
-    window.addEventListener('wheel', stopInteracting, {
-        passive: true
-    });
-    window.addEventListener('touchstart', stopInteracting, {
-        passive: true
-    });
-
-    animationFrameId = requestAnimationFrame(step);
+    smoothScrollTo(targetPos, speed);
 }
 
 
