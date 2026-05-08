@@ -82,6 +82,7 @@
             {
                 sub: '介面行為控制',
                 links: [
+                    { id: 'core-ui', anchor: 'smoothScrollTo',         label: 'smoothScrollTo()',         keywords: 'smoothScrollTo 捲動 平滑 easeInOutQuad requestAnimationFrame 座標' },
                     { id: 'core-ui', anchor: 'scrollToTop',            label: 'scrollToTop()',            keywords: 'scrollToTop 回到頂部 捲動 scroll top' },
                     { id: 'core-ui', anchor: 'scrollDown',             label: 'scrollDown()',             keywords: 'scrollDown 向下捲動 scroll down' },
                     { id: 'core-ui', anchor: 'actionLightbox',         label: 'actionLightbox()',         keywords: 'actionLightbox lightbox 開關 燈箱 open close' },
@@ -505,6 +506,30 @@ formData.<span class="t-fn">append</span>(<span class="t-str">'name'</span>, <sp
     <h1 class="m-h1">介面行為控制</h1>
     <p class="m-lead">頁面捲動、Lightbox、Dialog 等常用 UI 行為的統一介面。</p>
 
+     <h2 id="smoothScrollTo" class="m-h2">smoothScrollTo()</h2>
+    <div class="m-signature"><span class="t-fn">smoothScrollTo</span>(<span class="t-prop">targetPos</span>: <span class="t-kw">number</span>, <span class="t-prop">duration</span>?: <span class="t-kw">number</span> = <span class="t-num">1000</span>): <span class="t-kw">void</span></div>
+    <p class="m-p">以 <code class="m-code">requestAnimationFrame</code> 驅動的底層平滑捲動引擎，採用 <strong>easeInOutQuad</strong> 緩動公式，捲至指定的絕對 Y 軸座標。<code class="m-code">scrollToTop</code> 與 <code class="m-code">scrollDown</code> 皆委派給此函式執行。</p>
+    <p class="m-p">若上一個捲動動畫尚未結束即再次呼叫，會先取消前一個 <code class="m-code">requestAnimationFrame</code> 再重新開始，避免同時執行多個動畫。</p>
+
+    <table class="m-table">
+        <thead><tr><th>參數</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+        <tbody>
+            <tr><td><code class="m-code">targetPos</code><span class="m-req">必填</span></td><td><span class="m-type">number</span></td><td>—</td><td>目標絕對 Y 軸座標（px）。</td></tr>
+            <tr><td><code class="m-code">duration</code><span class="m-opt">選填</span></td><td><span class="m-type">number</span></td><td><code class="m-code">1000</code></td><td>動畫持續時間（ms）。</td></tr>
+        </tbody>
+    </table>
+
+    <div class="m-codeblock">
+        <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
+        <pre class="m-codeblock__pre"><span class="t-cmt">/* 捲動至距頁面頂部 500px 處，動畫 600ms */</span>
+<span class="t-fn">smoothScrollTo</span>(<span class="t-num">500</span>, <span class="t-num">600</span>);
+
+<span class="t-cmt">/* 搭配元素位置計算 */</span>
+<span class="t-kw">const</span> el  = document.<span class="t-fn">querySelector</span>(<span class="t-str">'.j-target'</span>);
+<span class="t-kw">const</span> top = el.<span class="t-fn">getBoundingClientRect</span>().top + window.pageYOffset;
+<span class="t-fn">smoothScrollTo</span>(top, <span class="t-num">800</span>);</pre>
+    </div>
+
     <h2 id="scrollToTop" class="m-h2">scrollToTop()</h2>
     <div class="m-signature"><span class="t-fn">scrollToTop</span>(<span class="t-prop">speed</span>?: <span class="t-kw">number</span> = <span class="t-num">1000</span>): <span class="t-kw">void</span></div>
     <p class="m-p">平滑捲回頁面頂部。若已在頂部則不執行。使用者主動介入（滾輪/觸控）時立即中止動畫。</p>
@@ -524,8 +549,7 @@ formData.<span class="t-fn">append</span>(<span class="t-str">'name'</span>, <sp
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">html</span></div>
         <pre class="m-codeblock__pre"><span class="t-cmt">&lt;!-- 觸發按鈕 --&gt;</span>
-&lt;<span class="t-kw">button</span> <span class="t-prop">class</span>=<span class="t-str">"j-lightbox-open"</span> <span class="t-prop">data-target</span>=<span class="t-str">"gallery"</span>
-        <span class="t-prop">onclick</span>=<span class="t-str">"actionLightbox(event, 'open')"</span>&gt;開啟&lt;/<span class="t-kw">button</span>&gt;
+&lt;<span class="t-kw">button</span> <span class="t-prop">class</span>=<span class="t-str">"j-lightbox-open"</span> <span class="t-prop">data-target</span>=<span class="t-str">"gallery"</span> <span class="t-prop">onclick</span>=<span class="t-str">"actionLightbox(event, 'open')"</span>&gt;開啟&lt;/<span class="t-kw">button</span>&gt;
 
 <span class="t-cmt">&lt;!-- Lightbox 容器 --&gt;</span>
 &lt;<span class="t-kw">div</span> <span class="t-prop">class</span>=<span class="t-str">"j-lightbox"</span> <span class="t-prop">data-lightbox</span>=<span class="t-str">"gallery"</span>&gt;
