@@ -117,7 +117,7 @@ function clamp(min, num, max) {
         let style = window.getComputedStyle(el);
         let stickyTop = parseInt(style.top, 10) || 0;
 
-        return (rect.top <= stickyTop);
+        return (rect.top <= stickyTop + 10);
     };
 
     /* 注入原生 HTMLElement 原型 */
@@ -1187,22 +1187,22 @@ const makeFetchPromise = (url, data) => {
             cache: 'no-cache',
             body: data
         })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('連線失敗');
-            }
-            return response.json();
-        })
-        .then((respon) => {
-            if (respon && respon.data) {
-                resolve(respon.data);
-            } else {
-                reject(new Error('AJAX 錯誤：沒有取得有效資料'));
-            }
-        })
-        .catch((error) => {
-            /* 防止 Promise 懸掛 */
-            reject(error);
-        });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('連線失敗');
+                }
+                return response.json();
+            })
+            .then((respon) => {
+                if (respon && respon.data) {
+                    resolve(respon.data);
+                } else {
+                    reject(new Error('AJAX 錯誤：沒有取得有效資料'));
+                }
+            })
+            .catch((error) => {
+                /* 防止 Promise 懸掛 */
+                reject(error);
+            });
     });
 };
