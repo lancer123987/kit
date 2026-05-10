@@ -139,6 +139,112 @@ function clamp(min, num, max) {
 })();
 
 
+/**
+ * 滑動展開或收合元素
+ *
+ * @access    public
+ *
+ * @param     {HTMLElement}   el                  目標元素
+ * @param     {boolean}       isOpen              true 為展開，false 為收合
+ * @param     {object}        [options]           選項設定
+ * @param     {number}        [options.duration]  動畫時長（毫秒），預設 300
+ * @param     {string}        [options.display]   展開時的 display 類型，預設 'block'
+ * @param     {Function}      [options.callback]  動畫結束後的 callback
+ *
+ * @return    {void}
+ */
+(function () {
+    function slide(el, isOpen, options) {
+        el = unwrapjQuery(el);
+
+        if (!(el instanceof HTMLElement)) {
+            devError('[slide] Invalid element: must be an HTMLElement or jQuery object.');
+            return;
+        }
+
+        const {
+            duration = 300,
+            display  = 'block',
+            callback
+        } = options || {};
+
+        el.addEventListener('transitionend', function onEnd() {
+            if (!isOpen) el.style.display = 'none';
+
+            el.style.transition    = '';
+            el.style.overflow      = '';
+            el.style.height        = '';
+            el.style.paddingTop    = '';
+            el.style.paddingBottom = '';
+
+            el.removeEventListener('transitionend', onEnd);
+            if ('function' === typeof callback) callback();
+        });
+
+        if (isOpen) {
+            el.style.display       = display;
+            el.style.overflow      = 'hidden';
+            el.style.height        = '0';
+            el.style.paddingTop    = '0';
+            el.style.paddingBottom = '0';
+
+            const naturalHeight       = el.scrollHeight;
+            const computedStyle       = getComputedStyle(el);
+            const targetPaddingTop    = computedStyle.paddingTop;
+            const targetPaddingBottom = computedStyle.paddingBottom;
+
+            el.style.transition = `height ${duration}ms ease, padding ${duration}ms ease`;
+
+            requestAnimationFrame(() => {
+                el.style.height        = naturalHeight + 'px';
+                el.style.paddingTop    = targetPaddingTop;
+                el.style.paddingBottom = targetPaddingBottom;
+            });
+
+        } else {
+            el.style.overflow   = 'hidden';
+            el.style.height     = el.scrollHeight + 'px';
+            el.style.transition = `height ${duration}ms ease, padding ${duration}ms ease`;
+
+            requestAnimationFrame(() => {
+                el.style.height        = '0';
+                el.style.paddingTop    = '0';
+                el.style.paddingBottom = '0';
+            });
+        }
+    }
+
+    /* 注入原生 HTMLElement 原型 */
+    if ('undefined' !== typeof HTMLElement && !HTMLElement.prototype.slide) {
+        /**
+         * @param     {boolean}   isOpen
+         * @param     {object}    [options]
+         * @return    {HTMLElement}
+         */
+        HTMLElement.prototype.slide = function (isOpen, options) {
+            slide(this, isOpen, options);
+            return this;
+        };
+    }
+
+    /* 注入 jQuery 插件原型 */
+    if ('undefined' !== typeof jQuery && !jQuery.fn.slide) {
+        /**
+         * @param     {boolean}   isOpen
+         * @param     {object}    [options]
+         * @return    {jQuery}
+         */
+        jQuery.fn.slide = function (isOpen, options) {
+            this.each(function () {
+                slide(this, isOpen, options);
+            });
+            return this;
+        };
+    }
+
+})();
+
+
 
 
 /**========================================================================
