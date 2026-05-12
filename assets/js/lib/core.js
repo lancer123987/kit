@@ -147,13 +147,28 @@ function clamp(min, num, max) {
  * @param     {HTMLElement}   el                  目標元素
  * @param     {boolean}       isOpen              true 為展開，false 為收合
  * @param     {object}        [options]           選項設定
- * @param     {number}        [options.duration]  動畫時長（毫秒），預設 300
+ * @param     {number}        [options.duration]  動畫時長（秒），預設 0.3
  * @param     {string}        [options.display]   展開時的 display 類型，預設 'block'
  * @param     {Function}      [options.callback]  動畫結束後的 callback
  *
  * @return    {void}
  */
 (function () {
+
+    /**
+     * 滑動展開或收合元素
+     *
+     * @access    public
+     *
+     * @param     {HTMLElement}   el                  目標元素
+     * @param     {boolean}       isOpen              true 為展開，false 為收合
+     * @param     {object}        [options]           選項設定
+     * @param     {number}        [options.duration]  動畫時長（毫秒），預設 300
+     * @param     {string}        [options.display]   展開時的 display 類型，預設 'block'
+     * @param     {Function}      [options.callback]  動畫結束後的 callback
+     *
+     * @return    {void}
+     */
     function slide(el, isOpen, options) {
         el = unwrapjQuery(el);
 
@@ -168,7 +183,12 @@ function clamp(min, num, max) {
             callback
         } = options || {};
 
-        el.addEventListener('transitionend', function onEnd() {
+        // 若動畫進行中，先凍結當前位置
+        if ('function' === typeof el._slideStop) {
+            el._slideStop();
+        }
+
+        function onEnd() {
             if (!isOpen) el.style.display = 'none';
 
             el.style.transition    = '';
@@ -176,29 +196,56 @@ function clamp(min, num, max) {
             el.style.height        = '';
             el.style.paddingTop    = '';
             el.style.paddingBottom = '';
+            el._slideStop          = null;
 
             el.removeEventListener('transitionend', onEnd);
             if ('function' === typeof callback) callback();
-        });
+        }
+
+        el._slideStop = function () {
+            const cs               = getComputedStyle(el);
+            el.style.height        = cs.height;
+            el.style.paddingTop    = cs.paddingTop;
+            el.style.paddingBottom = cs.paddingBottom;
+            el.style.transition    = '';
+            el.style.overflow      = '';
+            el._slideStop          = null;
+            el.removeEventListener('transitionend', onEnd);
+        };
+
+        el.addEventListener('transitionend', onEnd);
 
         if (isOpen) {
-            el.style.display       = display;
-            el.style.overflow      = 'hidden';
-            el.style.height        = '0';
-            el.style.paddingTop    = '0';
-            el.style.paddingBottom = '0';
+            el.style.display  = display;
+            el.style.overflow = 'hidden';
 
-            const naturalHeight       = el.scrollHeight;
             const computedStyle       = getComputedStyle(el);
             const targetPaddingTop    = computedStyle.paddingTop;
             const targetPaddingBottom = computedStyle.paddingBottom;
+            const boxSizing           = computedStyle.boxSizing;
+
+            el.style.paddingTop    = '0';
+            el.style.paddingBottom = '0';
+            el.style.height        = '0';
+
+            const naturalHeight   = el.scrollHeight;
+            const paddingTopPx    = parseFloat(targetPaddingTop)                || 0;
+            const paddingBottomPx = parseFloat(targetPaddingBottom)             || 0;
+            const borderTopPx     = parseFloat(computedStyle.borderTopWidth)    || 0;
+            const borderBottomPx  = parseFloat(computedStyle.borderBottomWidth) || 0;
+
+            const targetHeight = ('border-box' === boxSizing)
+                ? naturalHeight + paddingTopPx + paddingBottomPx + borderTopPx + borderBottomPx
+                : naturalHeight;
 
             el.style.transition = `height ${duration}ms ease, padding ${duration}ms ease`;
 
             requestAnimationFrame(() => {
-                el.style.height        = naturalHeight + 'px';
-                el.style.paddingTop    = targetPaddingTop;
-                el.style.paddingBottom = targetPaddingBottom;
+                requestAnimationFrame(() => {
+                    el.style.height        = targetHeight + 'px';
+                    el.style.paddingTop    = targetPaddingTop;
+                    el.style.paddingBottom = targetPaddingBottom;
+                });
             });
 
         } else {
@@ -207,39 +254,71 @@ function clamp(min, num, max) {
             el.style.transition = `height ${duration}ms ease, padding ${duration}ms ease`;
 
             requestAnimationFrame(() => {
-                el.style.height        = '0';
-                el.style.paddingTop    = '0';
-                el.style.paddingBottom = '0';
+                requestAnimationFrame(() => {
+                    el.style.height        = '0';
+                    el.style.paddingTop    = '0';
+                    el.style.paddingBottom = '0';
+                });
             });
         }
     }
 
     /* 注入原生 HTMLElement 原型 */
-    if ('undefined' !== typeof HTMLElement && !HTMLElement.prototype.slide) {
-        /**
-         * @param     {boolean}   isOpen
-         * @param     {object}    [options]
-         * @return    {HTMLElement}
-         */
-        HTMLElement.prototype.slide = function (isOpen, options) {
-            slide(this, isOpen, options);
-            return this;
-        };
+    if ('undefined' !== typeof HTMLElement) {
+        if (!HTMLElement.prototype.slide) {
+            /**
+             * @param     {boolean}   isOpen
+             * @param     {object}    [options]
+             * @return    {HTMLElement}
+             */
+            HTMLElement.prototype.slide = function (isOpen, options) {
+                slide(this, isOpen, options);
+                return this;
+            };
+        }
+
+        if (!HTMLElement.prototype.slideStop) {
+            /**
+             * @return    {HTMLElement}
+             */
+            HTMLElement.prototype.slideStop = function () {
+                if ('function' === typeof this._slideStop) {
+                    this._slideStop();
+                }
+                return this;
+            };
+        }
     }
 
     /* 注入 jQuery 插件原型 */
-    if ('undefined' !== typeof jQuery && !jQuery.fn.slide) {
-        /**
-         * @param     {boolean}   isOpen
-         * @param     {object}    [options]
-         * @return    {jQuery}
-         */
-        jQuery.fn.slide = function (isOpen, options) {
-            this.each(function () {
-                slide(this, isOpen, options);
-            });
-            return this;
-        };
+    if ('undefined' !== typeof jQuery) {
+        if (!jQuery.fn.slide) {
+            /**
+             * @param     {boolean}   isOpen
+             * @param     {object}    [options]
+             * @return    {jQuery}
+             */
+            jQuery.fn.slide = function (isOpen, options) {
+                this.each(function () {
+                    slide(this, isOpen, options);
+                });
+                return this;
+            };
+        }
+
+        if (!jQuery.fn.slideStop) {
+            /**
+             * @return    {jQuery}
+             */
+            jQuery.fn.slideStop = function () {
+                this.each(function () {
+                    if ('function' === typeof this._slideStop) {
+                        this._slideStop();
+                    }
+                });
+                return this;
+            };
+        }
     }
 
 })();
