@@ -183,7 +183,7 @@ function clamp(min, num, max) {
             callback
         } = options || {};
 
-        // 若動畫進行中，先凍結當前位置
+        /* 若動畫進行中，先凍結當前位置 */
         if ('function' === typeof el._slideStop) {
             el._slideStop();
         }
