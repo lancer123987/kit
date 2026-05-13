@@ -376,6 +376,21 @@ textarea {
     flex: 0 1 auto;
 }
 
+/****展開收合容器****/
+.c-slide {
+    display: grid;
+    width: 100%;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .3s ease-in-out;
+    overflow: hidden;
+}
+
+.c-slide__inner {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
 
 /*===========================================
  * 共用零件
