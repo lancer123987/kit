@@ -1366,13 +1366,14 @@ function initCopyAction() {
  * @return    {Promise}
  */
 const makeFetchPromise = (url, data) => {
+    const isFormData = data instanceof FormData;
     return new Promise((resolve, reject) => {
         fetch(url, {
             method: 'POST',
             cache: 'no-cache',
-            body: data
-        })
-            .then((response) => {
+            headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+            body: isFormData ? data : JSON.stringify(data)
+        }).then((response) => {
                 if (!response.ok) {
                     throw new Error('連線失敗');
                 }
