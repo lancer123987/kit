@@ -123,8 +123,7 @@
 
 <span class="t-cmt">&lt;!-- 2. 有用到 Slick 才需要這兩支 --&gt;</span>
 &lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/jquery.min.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;
-&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/slick.min.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;
-&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/template/slick-plugi-template.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;</pre>
+&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/slick.min.js"</span>&gt;&lt;/<span class="t-kw">script</span>
     </div>
 </article>`,
 
