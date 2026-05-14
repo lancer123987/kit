@@ -36,7 +36,8 @@
                     { id: 'slick-count',    anchor: '', label: 'count',        keywords: 'count 計數器 頁碼 補零 handleSlickCount total current' },
                     { id: 'slick-arrow',    anchor: '', label: 'customArrow',  keywords: 'customArrow 箭頭 prev next disable hide handleCustomArrow' },
                     { id: 'slick-progress', anchor: '', label: 'progress',     keywords: 'progress 進度條 autoplaySpeed CSS animation' },
-                    { id: 'slick-media',    anchor: '', label: 'media',        keywords: 'media video audio iframe youtube vimeo 媒體 播放 暫停 handleMedia' }
+                    { id: 'slick-media',    anchor: '', label: 'media',        keywords: 'media video audio iframe youtube vimeo 媒體 播放 暫停 handleMedia' },
+                    { id: 'slick-dynamic',  anchor: '', label: 'dynamicShow',  keywords: 'dynamicShow 動態 slidesToShow 自動計算 寬度 itemSelector maxShow' }
                 ]
             }
         ]
@@ -110,6 +111,7 @@
             <tr><td><code class="m-code">countZero</code></td><td><span class="m-type">boolean</span></td><td>計數器是否補零（<code class="m-code">01/09</code>）。預設 <code class="m-code">false</code>。</td></tr>
             <tr><td><code class="m-code">customArrow</code></td><td><span class="m-type">string | jQuery | null</span></td><td>自訂箭頭按鈕的選擇器或 jQuery 物件。需搭配 <code class="m-code">data-type="prev"</code>/<code class="m-code">"next"</code>。</td></tr>
             <tr><td><code class="m-code">progress</code></td><td><span class="m-type">string | jQuery | null</span></td><td>進度條 DOM 選擇器或 jQuery 物件。</td></tr>
+            <tr><td><code class="m-code">dynamicShow</code></td><td><span class="m-type">object | null</span></td><td>依容器寬度自動計算 <code class="m-code">slidesToShow</code>。傳入設定物件啟用，詳見 Plugin: dynamicShow。</td></tr>
         </tbody>
     </table>
 
@@ -326,8 +328,46 @@
             <tr><td><code class="m-code">setPosition / afterChange</code></td><td>播放當前可視項目中有 <code class="m-code">data-autoplay</code> 的媒體（僅 <code class="m-code">slidesToShow = 1</code> 時）。</td></tr>
         </tbody>
     </table>
-</article>`
+</article>`,
+'slick-dynamic': `
+<article class="m-section">
+    <span class="m-tag">slick-plugin.js</span>
+    <h1 class="m-h1">Plugin: dynamicShow</h1>
+    <p class="m-lead">依容器實際寬度與每個 item 的真實寬度動態計算 <code class="m-code">slidesToShow</code>，避免硬寫斷點數值。在 <code class="m-code">init</code> 與 <code class="m-code">setPosition</code> 事件觸發時重新計算，只在數值有變化時才呼叫 <code class="m-code">slickSetOption</code>，減少不必要的重繪。</p>
 
+    <h2 class="m-h2">配置方式</h2>
+    <div class="m-codeblock">
+        <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
+        <pre class="m-codeblock__pre">plugin: {
+    dynamicShow: {
+        itemSelector: <span class="t-str">'.j-slide-item'</span>, <span class="t-cmt">/* 必填：slide item 選擇器 */</span>
+        maxShow: <span class="t-num">4</span>                      <span class="t-cmt">/* 選填：最大顯示數，預設 4 */</span>
+    }
+}</pre>
+    </div>
+
+    <h3 class="m-h3">options 物件</h3>
+    <table class="m-table">
+        <thead><tr><th>屬性</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+        <tbody>
+            <tr><td><code class="m-code">itemSelector</code><span class="m-req">必填</span></td><td><span class="m-type">string</span></td><td>—</td><td>輪播容器內 slide item 的 CSS 選擇器，用於量測每個 item 的實際寬度（含 margin）。</td></tr>
+            <tr><td><code class="m-code">maxShow</code><span class="m-opt">選填</span></td><td><span class="m-type">number</span></td><td><code class="m-code">4</code></td><td>允許顯示的最大數量上限，實際值還會受 item 總數限制（不超過 <code class="m-code">itemLength</code>）。</td></tr>
+        </tbody>
+    </table>
+
+    <h2 class="m-h2">計算邏輯</h2>
+    <p class="m-p">每次觸發時從容器寬度開始扣減，依序減去每個 item 的 <code class="m-code">outerWidth(true)</code>（含 margin），能放入幾個就計為幾個。最終結果以 <code class="m-code">clamp(1, count, Math.min(maxShow, itemLength))</code> 確保不小於 1、不超過設定上限與 item 總數。</p>
+
+    <div class="m-callout m-callout--info">
+        <span class="m-callout__icon">ℹ</span>
+        <p>計算值與上次相同時不觸發 <code class="m-code">slickSetOption</code>，避免同寬度觸發重複渲染。搭配 <code class="m-code">ResizeHandler.init()</code> 使用時，視窗寬度改變後 Slick 會自行發出 <code class="m-code">setPosition</code>，無需額外處理。</p>
+    </div>
+
+    <div class="m-callout m-callout--warn">
+        <span class="m-callout__icon">⚠</span>
+        <p>啟用 <code class="m-code">dynamicShow</code> 時，<code class="m-code">settings.slidesToShow</code> 仍需給定初始值（建議設為 <code class="m-code">1</code>），實際值會在 <code class="m-code">init</code> 後立即被覆寫。</p>
+    </div>
+</article>`
     };
 
 
