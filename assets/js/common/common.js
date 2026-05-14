@@ -123,7 +123,7 @@ jQuery(document).ready(function () {
         /* 表格處理 */
         $edit.find('table').each(function () {
             const $table = jQuery(this);
-            $table.after('<div class="c-edit__table"></div>');
+            $table.after('<div class="c-edit__table" data-lenis-prevent></div>');
             $table.next('.c-edit__table').append(jQuery(this).clone());
             $table.remove();
         });
