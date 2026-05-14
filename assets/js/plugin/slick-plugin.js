@@ -1,6 +1,6 @@
 /**
  * @description jQuery Slick 擴充外掛
- * @version     1.0.1
+ * @version     1.0.2
  * @author      Lancer
  * @updated     2026-02-21
  * @dependency  jQuery 3.5.1+, slick 1.9, core.js
@@ -12,7 +12,8 @@ const slickPlugin_SET = new Set([
     'count',
     'customArrow',
     'progress',
-    'media'
+    'media',
+    'dynamicShow'
 ]);
 
 /* slick 事件列表 */
@@ -76,7 +77,8 @@ jQuery.fn.initSlick = function (config = {}) {
         const conf = jQuery.extend({
             count: null,
             countZero: false,
-            customArrow: null
+            customArrow: null,
+            dynamicShow: null
         }, plugin);
 
         /* 防呆機制：強制 slidesToShow >= slidesToScroll */
@@ -377,12 +379,12 @@ function slickPlugin($this, conf, active = []) {
             if (!$progress || 0 === $progress.length) {
                 devWarn('[Slick Init] Progress target element not found.');
                 return;
-            } 
+            }
 
             $this.on('init.slickExtend breakpoint.slickExtend', (event, slick) => {
                 let speed = slick.options.autoplaySpeed ?? 3000;
                 let autoplaySpeedTime = speed / 1000;
-                $progress.css('--autoplaySpeedTime', `${autoplaySpeedTime}s`).addClass('run');              
+                $progress.css('--autoplaySpeedTime', `${autoplaySpeedTime}s`).addClass('run');
             }).on('beforeChange.slickExtend', (event, slick, currentSlide, nextSlide) => {
                $progress.removeClass('run');
             }).on('afterChange.slickExtend', (event, slick, currentSlide, nextSlide) => {
@@ -424,6 +426,42 @@ function slickPlugin($this, conf, active = []) {
                 handleMedia(slick, 'pause');
             }).on('setPosition.slickExtend afterChange.slickExtend', (event, slick) => {
                 handleMedia(slick, 'play');
+            });
+        },
+        /* 動態決定輪播數量 */
+        dynamicShow: () => {
+            const options = conf.dynamicShow;
+            if (null === options || 'object' !== typeof options) return;
+
+            const { itemSelector, maxShow = 4 } = options;
+            const $items = $this.find(itemSelector);
+            const itemLength = $items.length;
+            let lastShowCount = -1;
+
+            /**
+             * 計算並更新顯示數量
+             * * @param {object} slick slick 實例
+             */
+            const updateSlidesToShow = (slick) => {
+                let remainingW = $this.outerWidth();
+                let count = 0;
+
+                $items.each(function () {
+                    remainingW -= jQuery(this).outerWidth(true);
+                    if (0 > remainingW) return;
+                    count += 1;
+                });
+
+                const nextShowCount = clamp(1, count, Math.min(maxShow, itemLength));
+
+                if (nextShowCount !== lastShowCount) {
+                    lastShowCount = nextShowCount;
+                    slick.slickSetOption('slidesToShow', nextShowCount, true);
+                }
+            };
+
+            $this.on('init.slickExtend setPosition.slickExtend', (event, slick) => {
+                updateSlidesToShow(slick);
             });
         }
     };
