@@ -1,6 +1,6 @@
 /**
  * @description jQuery Slick 擴充外掛
- * @version     1.0.2
+ * @version     1.0.3
  * @author      Lancer
  * @updated     2026-02-21
  * @dependency  jQuery 3.5.1+, slick 1.9, core.js
@@ -433,7 +433,7 @@ function slickPlugin($this, conf, active = []) {
             const options = conf.dynamicShow;
             if (null === options || 'object' !== typeof options) return;
 
-            const { itemSelector, maxShow = 4 } = options;
+            const { itemSelector, maxShow = 4, currentSelector = false } = options;
             const $items = $this.find(itemSelector);
             const itemLength = $items.length;
             let lastShowCount = -1;
@@ -460,7 +460,34 @@ function slickPlugin($this, conf, active = []) {
                 }
             };
 
-            $this.on('init.slickExtend setPosition.slickExtend', (event, slick) => {
+            /**
+             * 初始化時將輪播捲動至當前項目
+             *
+             * @param  {object} slick      slick 實例
+             * @param  {number} showCount  目前顯示數量
+             * @return {void}
+             */
+            const goToCurrent = (slick, showCount) => {
+                if (!currentSelector) return;
+
+                const $current = $this.find(currentSelector);
+                if (!$current.length) return;
+
+                const targetIndex = $current.data('slick-index');
+                if ('undefined' === typeof targetIndex) return;
+
+                /* 當前項目已在可視範圍內，不需捲動 */
+                if (showCount > targetIndex) return;
+
+                setTimeout(() => {
+                    slick.slickGoTo(targetIndex - showCount + 1, true);
+                }, 0);
+            };
+
+            $this.on('init.slickExtend', (event, slick) => {
+                const showCount = updateSlidesToShow(slick);
+                goToCurrent(slick, showCount);
+            }).on('setPosition.slickExtend', (event, slick) => {
                 updateSlidesToShow(slick);
             });
         }
