@@ -397,7 +397,7 @@ input {
  * 主內容區
  *===========================================*/
 .manual {
-    padding: 52px 60px 120px;
+    padding: 60px 60px 120px;
 }
 
 /* 文章元素 */
@@ -679,11 +679,15 @@ input {
 
 }
 
-@media screen and (max-width: 767px) {}
+@media screen and (max-width: 767px) {
+    .manual {
+        padding: 60px 30px 120px;
+    }
+}
 
 @media screen and (max-width: 575px) {
     .manual {
-        padding: 52px 40px 120px;
+        padding: 60px 20px 120px;
     }
 }
 
