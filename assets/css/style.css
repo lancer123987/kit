@@ -650,6 +650,9 @@ input {
 }
 
 @media screen and (max-width: 991px) {
+    .main {
+        padding: 0;
+    }
 
     /*===========================================
      * 側欄
@@ -672,6 +675,8 @@ input {
     #asideCheck:checked~.c-aside {
         transform: translateX(100%);
     }
+
+
 }
 
 @media screen and (max-width: 767px) {}
