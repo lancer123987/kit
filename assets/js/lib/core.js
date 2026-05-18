@@ -83,11 +83,13 @@ function clamp(min, num, max) {
     /* 參數型別檢查 */
     if ('number' !== typeof min || 'number' !== typeof num || 'number' !== typeof max) {
         devError('clamp error: All parameters (min, num, max) must be of type number.');
+        return NaN;
     }
 
     /* 邊界邏輯檢查 */
     if (min > max) {
         devError(`clamp error: Minimum value (${min}) cannot be greater than Maximum value (${max}).`);
+        return NaN;
     }
 
     const result = Math.min(Math.max(num, min), max);
@@ -147,28 +149,13 @@ function clamp(min, num, max) {
  * @param     {HTMLElement}   el                  目標元素
  * @param     {boolean}       isOpen              true 為展開，false 為收合
  * @param     {object}        [options]           選項設定
- * @param     {number}        [options.duration]  動畫時長（秒），預設 0.3
+ * @param     {number}        [options.duration]  動畫時長（毫秒），預設 300
  * @param     {string}        [options.display]   展開時的 display 類型，預設 'block'
  * @param     {Function}      [options.callback]  動畫結束後的 callback
  *
  * @return    {void}
  */
 (function () {
-
-    /**
-     * 滑動展開或收合元素
-     *
-     * @access    public
-     *
-     * @param     {HTMLElement}   el                  目標元素
-     * @param     {boolean}       isOpen              true 為展開，false 為收合
-     * @param     {object}        [options]           選項設定
-     * @param     {number}        [options.duration]  動畫時長（毫秒），預設 300
-     * @param     {string}        [options.display]   展開時的 display 類型，預設 'block'
-     * @param     {Function}      [options.callback]  動畫結束後的 callback
-     *
-     * @return    {void}
-     */
     function slide(el, isOpen, options) {
         el = unwrapjQuery(el);
 
@@ -361,7 +348,7 @@ function isMobileDevice() {
     const isMobileUA = mobileRegex.some(device => device.test(userAgent));
 
     /* 確認是否多點觸碰 */
-    const isIPad = (navigator.maxTouchPoints && navigator.maxTouchPoints > 1 && /Macintosh/i.test(userAgent));
+    const isIPad = (navigator.maxTouchPoints > 1 && /Macintosh/i.test(userAgent));
 
     /* 確認螢幕尺寸 */
     const isSmallScreen = Math.min(screen.width, screen.height) < 1024;
@@ -465,11 +452,7 @@ function getDomainName(src) {
  * @return    {string|null}
  */
 function getSearch(search = '') {
-    let url = new URL(location.href);
-    let params = new URLSearchParams(url.search);
-    let result = params.get(search);
-
-    return result;
+    return new URLSearchParams(location.search).get(search);
 }
 
 
@@ -564,7 +547,7 @@ function setHash(key, value) {
  *
  * @return    {string}
  */
-function escapeHTML(str, maxLength = 5000) {
+function escapeHTML(str, maxLength = 1000) {
     const MAX_PREVIEW_LENGTH = 30;
 
     /* 空值處理 */
@@ -848,7 +831,7 @@ function observeScroll(callback) {
     /* 紀錄上一次捲動的位置 */
     let wasTop = false;
     let wasBottom = false;
-    let lastScrollTop = (callback.length > 0) ? (window.pageYOffset || document.documentElement.scrollTop) : null;
+    let lastScrollTop = (callback.length > 0) ? (window.scrollY || document.documentElement.scrollTop) : null;
 
     function handler(e) {
         if (ticking) return;
@@ -858,7 +841,7 @@ function observeScroll(callback) {
             if (0 === callback.length) {
                 callback();
             } else {
-                const currentScrollTop = Math.max(0, window.pageYOffset || document.documentElement.scrollTop);
+                const currentScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop);
                 const windowHeight = window.innerHeight;
                 const docHeight = document.documentElement.scrollHeight;
 
@@ -922,11 +905,11 @@ function observeScroll(callback) {
  * @return    void
  */
 function observeInfAnim() {
-    let el = document.querySelectorAll('[data-animated-infinite="1"], [data-animated-infinite="true"]');
+    const el = document.querySelectorAll('[data-animated-infinite="1"], [data-animated-infinite="true"]');
     if (!el.length) return;
 
     /* Observer 設定 */
-    let options = {
+    const options = {
         root: null,
         rootMargin: '0px',
         /* 可視邊界調整 */
@@ -934,14 +917,14 @@ function observeInfAnim() {
     };
 
     /* Observer 動作 */
-    let observerCallback = (entries, observer) => {
+    const observerCallback = (entries, observer) => {
         entries.forEach(entry => {
             entry.target.classList.toggle('play', entry.isIntersecting);
         });
     };
 
     /* 建立 Observer */
-    let observer = new IntersectionObserver(observerCallback, options);
+    const observer = new IntersectionObserver(observerCallback, options);
 
     /* 處理元素 */
     el.forEach(element => {
@@ -1021,7 +1004,7 @@ function smoothScrollTo(targetPos, duration = 1000) {
         smoothScrollTo._rafId = null;
     }
 
-    let startPos = window.pageYOffset;
+    let startPos = window.scrollY;
     let distance = targetPos - startPos;
     let startTime = null;
 
@@ -1105,7 +1088,7 @@ function scrollDown(isHeader = false, speed = 800) {
     }
 
     let windowHeight = window.innerHeight;
-    let targetPos = window.pageYOffset + windowHeight - offset;
+    let targetPos = window.scrollY + windowHeight - offset;
 
     smoothScrollTo(targetPos, speed);
 }
@@ -1124,7 +1107,9 @@ function scrollDown(isHeader = false, speed = 800) {
 function actionLightbox(e, action = 'close') {
     e.preventDefault();
     if ('open' === action) {
-        const target = e.target.closest('.j-lightbox-open').dataset.target;
+        const opener = e.target.closest('.j-lightbox-open');
+        if (!opener) return;
+        const target = opener.dataset.target;
 
         if (!target) {
             devError('The element with class "j-lightbox-open" has an undefined "data-target" attribute.');
