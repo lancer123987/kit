@@ -2,7 +2,7 @@
  *
  * @description 說明書主控邏輯
  * @version     2.0.0
- * @dependency  core.js, core-template.js, slick-plugi-template.js
+ * @dependency  core.js, core-template.js, slick-plugin-template.js
  *
  * 負責：
  *   1. 讀取各 template JS 注入的 window.DOCS_NAV
