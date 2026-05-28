@@ -657,14 +657,15 @@ const ResizeHandler = (() => {
      *
      * @access    public
      *
-     * @param     {function}  customResizeEvent   自訂處理函式
-     * @param     {string}    targetSelector      監控目標選擇器
-     * @param     {number}    debounceDelay       防抖延遲時間
-     * @param     {string}    direction           監控方向 ('x' | 'y' | 'both')
+     * @param     {function}  customResizeEvent               自訂處理函式
+     * @param     {Object}    options                         選項
+     * @param     {string}    options.targetSelector          監控目標選擇器
+     * @param     {number}    options.debounceDelay           防抖延遲時間
+     * @param     {string}    options.direction               監控方向 ('x' | 'y' | 'both')
      *
      * @return    {void}
      */
-    const init = (customResizeEvent, targetSelector = 'body', debounceDelay = delayDefault, direction = 'x') => {
+    const init = (customResizeEvent, { targetSelector = 'body', debounceDelay = delayDefault, direction = 'x' } = {}) => {
         /* 防抖動功能是否存在 */
         if ('function' !== typeof debounce) {
             return devError('ResizeHandler: Required function "debounce" is missing.');
