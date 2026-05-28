@@ -646,11 +646,9 @@ function wrapjQuery(el) {
  *
  * @access    public
  *
- * @param     {string}  direction   偵測方向
- *
- * @return    void
+ * @return    {void}
  */
-const ResizeHandler = ((direction = 'x') => {
+const ResizeHandler = (() => {
     /* 預設時間間隔 */
     const delayDefault = 400;
 
@@ -662,10 +660,11 @@ const ResizeHandler = ((direction = 'x') => {
      * @param     {function}  customResizeEvent   自訂處理函式
      * @param     {string}    targetSelector      監控目標選擇器
      * @param     {number}    debounceDelay       防抖延遲時間
+     * @param     {string}    direction           監控方向 ('x' | 'y' | 'both')
      *
      * @return    {void}
      */
-    const init = (customResizeEvent, targetSelector = 'body', debounceDelay = delayDefault) => {
+    const init = (customResizeEvent, targetSelector = 'body', debounceDelay = delayDefault, direction = 'x') => {
         /* 防抖動功能是否存在 */
         if ('function' !== typeof debounce) {
             return devError('ResizeHandler: Required function "debounce" is missing.');
