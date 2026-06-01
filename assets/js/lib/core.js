@@ -92,7 +92,7 @@ function clamp(min, num, max) {
         return NaN;
     }
 
-    const result = Math.min(Math.max(num, min), max);
+    let result = Math.min(Math.max(num, min), max);
     return result;
 }
 
@@ -164,7 +164,7 @@ function clamp(min, num, max) {
             return;
         }
 
-        const {
+        let {
             duration = 300,
             display  = 'block',
             callback
@@ -190,7 +190,7 @@ function clamp(min, num, max) {
         }
 
         el._slideStop = function () {
-            const cs               = getComputedStyle(el);
+            let cs                 = getComputedStyle(el);
             el.style.height        = cs.height;
             el.style.paddingTop    = cs.paddingTop;
             el.style.paddingBottom = cs.paddingBottom;
@@ -206,22 +206,22 @@ function clamp(min, num, max) {
             el.style.display  = display;
             el.style.overflow = 'hidden';
 
-            const computedStyle       = getComputedStyle(el);
-            const targetPaddingTop    = computedStyle.paddingTop;
-            const targetPaddingBottom = computedStyle.paddingBottom;
-            const boxSizing           = computedStyle.boxSizing;
+            let computedStyle       = getComputedStyle(el);
+            let targetPaddingTop    = computedStyle.paddingTop;
+            let targetPaddingBottom = computedStyle.paddingBottom;
+            let boxSizing           = computedStyle.boxSizing;
 
             el.style.paddingTop    = '0';
             el.style.paddingBottom = '0';
             el.style.height        = '0';
 
-            const naturalHeight   = el.scrollHeight;
-            const paddingTopPx    = parseFloat(targetPaddingTop)                || 0;
-            const paddingBottomPx = parseFloat(targetPaddingBottom)             || 0;
-            const borderTopPx     = parseFloat(computedStyle.borderTopWidth)    || 0;
-            const borderBottomPx  = parseFloat(computedStyle.borderBottomWidth) || 0;
+            let naturalHeight   = el.scrollHeight;
+            let paddingTopPx    = parseFloat(targetPaddingTop)                || 0;
+            let paddingBottomPx = parseFloat(targetPaddingBottom)             || 0;
+            let borderTopPx     = parseFloat(computedStyle.borderTopWidth)    || 0;
+            let borderBottomPx  = parseFloat(computedStyle.borderBottomWidth) || 0;
 
-            const targetHeight = ('border-box' === boxSizing)
+            let targetHeight = ('border-box' === boxSizing)
                 ? naturalHeight + paddingTopPx + paddingBottomPx + borderTopPx + borderBottomPx
                 : naturalHeight;
 
@@ -556,13 +556,13 @@ function escapeHTML(str, maxLength = 1000) {
         return '';
     }
 
-    let safeStr;
     const strType = typeof str;
+    let safeStr;
 
     /* 非字串處理 */
     if ('string' !== strType) {
         safeStr = String(str);
-        const preview = safeStr.length > MAX_PREVIEW_LENGTH ?
+        let preview = safeStr.length > MAX_PREVIEW_LENGTH ?
             safeStr.substring(0, MAX_PREVIEW_LENGTH) + '...' :
             safeStr;
         devWarn(`escapeHTML: Non-string str (${strType}) "${preview}"`);
@@ -579,7 +579,7 @@ function escapeHTML(str, maxLength = 1000) {
 
     /* 最大長度限制 */
     if (safeStr.length > parsedLength) {
-        const preview = safeStr.substring(0, MAX_PREVIEW_LENGTH) + '...';
+        let preview = safeStr.substring(0, MAX_PREVIEW_LENGTH) + '...';
         throw new Error(`escapeHTML str too long (${safeStr.length} chars): "${preview}"`);
     }
 
@@ -595,8 +595,8 @@ function escapeHTML(str, maxLength = 1000) {
  * @return    {string}
  */
 function getHashKey() {
-    const timestamp = Date.now();
-    const randomNum = Math.floor(Math.random() * 10000);
+    let timestamp = Date.now();
+    let randomNum = Math.floor(Math.random() * 10000);
     return timestamp + '_' + randomNum;
 }
 
@@ -671,7 +671,7 @@ const ResizeHandler = (() => {
             return devError('ResizeHandler: Required function "debounce" is missing.');
         }
 
-        const targetEl = document.querySelector(targetSelector);
+        let targetEl = document.querySelector(targetSelector);
         if (!targetEl) return;
 
         /* 紀錄最後一次觸發時的尺寸 */
@@ -679,7 +679,7 @@ const ResizeHandler = (() => {
         let lastHeight = targetEl.offsetHeight;
 
         /* 包裝回調函式 */
-        const debouncedCustomEvent = debounce(() => {
+        let debouncedCustomEvent = debounce(() => {
             if ('function' === typeof customResizeEvent) {
                 customResizeEvent();
             }
@@ -691,12 +691,12 @@ const ResizeHandler = (() => {
         }
 
         /* 建立 Observer */
-        const resizeObserver = new ResizeObserver((entries) => {
-            const entry = entries[0];
+        let resizeObserver = new ResizeObserver((entries) => {
+            let entry = entries[0];
             if (!entry) return;
 
             /* 取得目前尺寸 (浮點數精確度更高) */
-            const {
+            let {
                 width: currentWidth,
                 height: currentHeight
             } = entry.contentRect;
@@ -763,16 +763,16 @@ const observable = {
         onLeave
     }) {
         /* 若定義了 onLeave，代表需要反覆執行，強制將 once 設為 false */
-        const shouldOnce = onLeave ? false : once;
+        let shouldOnce = onLeave ? false : once;
 
         /* 設定偵測邊界 (Top, Right, Bottom, Left) */
-        const marginTop = 0 - top;
-        const marginBottom = 0 - bottom;
-        const rootMargin = `${marginTop}px 0px ${marginBottom}px 0px`;
+        let marginTop = 0 - top;
+        let marginBottom = 0 - bottom;
+        let rootMargin = `${marginTop}px 0px ${marginBottom}px 0px`;
 
-        const observer = new IntersectionObserver((entries) => {
+        let observer = new IntersectionObserver((entries) => {
             entries.forEach(async (entry) => {
-                const el = entry.target;
+                let el = entry.target;
 
                 if (entry.isIntersecting) {
                     /* --- 進入偵測區域 --- */
@@ -795,7 +795,7 @@ const observable = {
             threshold: threshold
         });
 
-        const elements = document.querySelectorAll(target);
+        let elements = document.querySelectorAll(target);
         if (0 === elements.length) {
             return null;
         }
@@ -824,7 +824,7 @@ function observeScroll(callback) {
     if ('function' !== typeof callback) return;
 
     /* 滾動緩衝 */
-    const buffer = 2;
+    let buffer = 2;
 
     let ticking = false;
 
@@ -841,21 +841,21 @@ function observeScroll(callback) {
             if (0 === callback.length) {
                 callback();
             } else {
-                const currentScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop);
-                const windowHeight = window.innerHeight;
-                const docHeight = document.documentElement.scrollHeight;
+                let currentScrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop);
+                let windowHeight = window.innerHeight;
+                let docHeight = document.documentElement.scrollHeight;
 
                 let direction = 'none';
-                const delta = currentScrollTop - lastScrollTop;
+                let delta = currentScrollTop - lastScrollTop;
 
                 if (Math.abs(delta) > buffer) {
                     direction = delta > 0 ? 'down' : 'up';
                 }
 
-                const isTop = currentScrollTop <= 0;
-                const isBottom = currentScrollTop + windowHeight >= docHeight - 1;
+                let isTop = currentScrollTop <= 0;
+                let isBottom = currentScrollTop + windowHeight >= docHeight - 1;
 
-                const shouldCall = direction !== 'none' || (isTop && !wasTop) || (isBottom && !wasBottom);
+                let shouldCall = direction !== 'none' || (isTop && !wasTop) || (isBottom && !wasBottom);
 
                 if (shouldCall) {
                     /* 回傳項目 */
@@ -878,10 +878,10 @@ function observeScroll(callback) {
         });
     }
 
-    const options = {
+    let options = {
         passive: true
     };
-    const events = ['wheel', 'touchmove', 'scroll'];
+    let events = ['wheel', 'touchmove', 'scroll'];
 
     /* 綁定事件 */
     events.forEach(evt => window.addEventListener(evt, handler, options));
@@ -905,11 +905,11 @@ function observeScroll(callback) {
  * @return    void
  */
 function observeInfAnim() {
-    const el = document.querySelectorAll('[data-animated-infinite="1"], [data-animated-infinite="true"]');
+    let el = document.querySelectorAll('[data-animated-infinite="1"], [data-animated-infinite="true"]');
     if (!el.length) return;
 
     /* Observer 設定 */
-    const options = {
+    let options = {
         root: null,
         rootMargin: '0px',
         /* 可視邊界調整 */
@@ -917,14 +917,14 @@ function observeInfAnim() {
     };
 
     /* Observer 動作 */
-    const observerCallback = (entries, observer) => {
+    let observerCallback = (entries, observer) => {
         entries.forEach(entry => {
             entry.target.classList.toggle('play', entry.isIntersecting);
         });
     };
 
     /* 建立 Observer */
-    const observer = new IntersectionObserver(observerCallback, options);
+    let observer = new IntersectionObserver(observerCallback, options);
 
     /* 處理元素 */
     el.forEach(element => {
@@ -1107,16 +1107,16 @@ function scrollDown(isHeader = false, speed = 800) {
 function actionLightbox(e, action = 'close') {
     e.preventDefault();
     if ('open' === action) {
-        const opener = e.target.closest('.j-lightbox-open');
+        let opener = e.target.closest('.j-lightbox-open');
         if (!opener) return;
-        const target = opener.dataset.target;
+        let target = opener.dataset.target;
 
         if (!target) {
             devError('The element with class "j-lightbox-open" has an undefined "data-target" attribute.');
             return;
         }
 
-        const lightbox = document.querySelector(`.j-lightbox[data-lightbox="${target}"]`);
+        let lightbox = document.querySelector(`.j-lightbox[data-lightbox="${target}"]`);
         if (!lightbox) {
             devError(`Lightbox Error: Target lightbox not found. No element matches the selector: .j-lightbox[data-lightbox="${target}"]`);
             return;
@@ -1168,21 +1168,21 @@ function handleSelectLinkChange($select) {
  * @return    {void}
  */
 function setDialog(type, setting = {}, callback1, callback2) {
-    const lightbox = document.querySelector('.j-lightbox[data-lightbox="dialog"]');
+    let lightbox = document.querySelector('.j-lightbox[data-lightbox="dialog"]');
     if (!lightbox) return;
 
     /* setting 預設值 */
-    const {
+    let {
         title = '', sub = '', icon = '', content = ''
     } = setting;
 
     /* 預先抓取 UI 元件 */
-    const elTitle = lightbox.querySelector('.j-dialog-title');
-    const elSub = lightbox.querySelector('.j-dialog-sub');
-    const elIcon = lightbox.querySelector('.j-dialog-icon');
-    const elContent = lightbox.querySelector('.j-dialog-content');
-    const btn1 = lightbox.querySelector('.j-dialog-callback1');
-    const btn2 = lightbox.querySelector('.j-dialog-callback2');
+    let elTitle = lightbox.querySelector('.j-dialog-title');
+    let elSub = lightbox.querySelector('.j-dialog-sub');
+    let elIcon = lightbox.querySelector('.j-dialog-icon');
+    let elContent = lightbox.querySelector('.j-dialog-content');
+    let btn1 = lightbox.querySelector('.j-dialog-callback1');
+    let btn2 = lightbox.querySelector('.j-dialog-callback2');
 
     /* 清除按鈕事件 */
     if (btn1) btn1.onclick = null;
@@ -1285,21 +1285,21 @@ function initCopyAction() {
     /* 檢查瀏覽器支援度與安全環境 (HTTPS) */
     if (!navigator.clipboard || !window.isSecureContext) {
         /* 若不支援，按鈕移除 */
-        const $staticButtons = document.querySelectorAll('.j-copy');
+        let $staticButtons = document.querySelectorAll('.j-copy');
         $staticButtons.forEach(($btn) => $btn.remove());
         return;
     }
 
     /* 使用事件代理，確保動態產生的內容也能觸發 */
     document.addEventListener('click', (e) => {
-        const $target = e.target.closest('.j-copy');
+        let $target = e.target.closest('.j-copy');
 
         if (null === $target) return;
 
         e.preventDefault();
 
         /* 優先取 data-copy 的值，若無則取當前網址 */
-        const textToCopy = $target.getAttribute('data-copy') || location.href;
+        let textToCopy = $target.getAttribute('data-copy') || location.href;
 
         navigator.clipboard.writeText(textToCopy).then(() => {
             /* 成功 */
@@ -1351,7 +1351,7 @@ function initCopyAction() {
  * @return    {Promise}
  */
 const makeFetchPromise = (url, data) => {
-    const isFormData = data instanceof FormData;
+    let isFormData = data instanceof FormData;
     return new Promise((resolve, reject) => {
         fetch(url, {
             method: 'POST',
