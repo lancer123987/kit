@@ -376,16 +376,15 @@ $el.<span class="t-fn">addClass</span>(<span class="t-str">'active'</span>);</pr
     <p class="m-lead">基於 <code class="m-code">ResizeObserver</code>、<code class="m-code">IntersectionObserver</code> 與 <code class="m-code">requestAnimationFrame</code> 的高效事件監聽工具，避免主執行緒過載。</p>
 
     <h2 id="ResizeHandler" class="m-h2">ResizeHandler.init()</h2>
-    <div class="m-signature"><span class="t-prop">ResizeHandler</span>.<span class="t-fn">init</span>(<span class="t-prop">customResizeEvent</span>: <span class="t-kw">function</span>, <span class="t-prop">options</span>?: <span class="t-kw">object</span>): <span class="t-kw">void</span></div>
-    <p class="m-p">以 <code class="m-code">ResizeObserver</code> 監控指定元素的尺寸變化，初始化時立即觸發一次 callback。</p>
+    <div class="m-signature"><span class="t-prop">ResizeHandler</span>.<span class="t-fn">init</span>(<span class="t-prop">customResizeEvent</span>, <span class="t-prop">targetSelector</span>?, <span class="t-prop">debounceDelay</span>?): <span class="t-kw">void</span></div>
+    <p class="m-p">以 <code class="m-code">ResizeObserver</code> 監控指定元素的尺寸變化，初始化時立即觸發一次 callback。建構時可指定監聽方向（<code class="m-code">'x'</code> / <code class="m-code">'y'</code> / <code class="m-code">'both'</code>，預設 <code class="m-code">'x'</code>）。</p>
 
     <table class="m-table">
         <thead><tr><th>參數</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
         <tbody>
             <tr><td><code class="m-code">customResizeEvent</code><span class="m-req">必填</span></td><td><span class="m-type">function</span></td><td>—</td><td>尺寸改變時執行的回調函式。</td></tr>
-            <tr><td><code class="m-code">options.targetSelector</code><span class="m-opt">選填</span></td><td><span class="m-type">string</span></td><td><code class="m-code">'body'</code></td><td>監控目標 CSS 選擇器。</td></tr>
-            <tr><td><code class="m-code">options.debounceDelay</code><span class="m-opt">選填</span></td><td><span class="m-type">number</span></td><td><code class="m-code">400</code></td><td>防抖延遲毫秒數。</td></tr>
-            <tr><td><code class="m-code">options.direction</code><span class="m-opt">選填</span></td><td><span class="m-type">'x' | 'y' | 'both'</span></td><td><code class="m-code">'x'</code></td><td>監控方向。僅寬度變化觸發、僅高度，或兩者皆觸發。</td></tr>
+            <tr><td><code class="m-code">targetSelector</code><span class="m-opt">選填</span></td><td><span class="m-type">string</span></td><td><code class="m-code">'body'</code></td><td>監控目標 CSS 選擇器。</td></tr>
+            <tr><td><code class="m-code">debounceDelay</code><span class="m-opt">選填</span></td><td><span class="m-type">number</span></td><td><code class="m-code">400</code></td><td>防抖延遲毫秒數。</td></tr>
         </tbody>
     </table>
 
@@ -395,12 +394,8 @@ $el.<span class="t-fn">addClass</span>(<span class="t-str">'active'</span>);</pr
     console.<span class="t-fn">log</span>(<span class="t-str">'寬度改變'</span>, window.innerWidth);
 });
 
-<span class="t-cmt">/* 指定元素、防抖 200ms、同時監聽寬高 */</span>
-<span class="t-prop">ResizeHandler</span>.<span class="t-fn">init</span>(() => { <span class="t-cmt">/* ... */</span> }, {
-    targetSelector: <span class="t-str">'.j-container'</span>,
-    debounceDelay: <span class="t-num">200</span>,
-    direction: <span class="t-str">'both'</span>
-});</pre>
+<span class="t-cmt">/* 指定元素、防抖 200ms */</span>
+<span class="t-prop">ResizeHandler</span>.<span class="t-fn">init</span>(() => { <span class="t-cmt">/* ... */</span> }, <span class="t-str">'.j-container'</span>, <span class="t-num">200</span>);</pre>
     </div>
 
     <h2 id="observable" class="m-h2">observable.init()</h2>
