@@ -39,7 +39,9 @@
             {
                 sub: 'DOM 屬性擴充',
                 links: [
-                    { id: 'core-dom', anchor: 'isSticky', label: 'isSticky()', keywords: 'isSticky sticky jQuery HTMLElement DOM 屬性 釘住' }
+                    { id: 'core-dom', anchor: 'isSticky',  label: 'isSticky()',  keywords: 'isSticky sticky jQuery HTMLElement DOM 屬性 釘住' },
+                    { id: 'core-dom', anchor: 'slide',     label: 'slide()',     keywords: 'slide slideDown slideUp 展開 收合 動畫 jQuery HTMLElement DOM' },
+                    { id: 'core-dom', anchor: 'slideStop', label: 'slideStop()', keywords: 'slideStop slide 停止 凍結 動畫 jQuery HTMLElement DOM' }
                 ]
             },
             {
@@ -118,12 +120,8 @@
     <h2 class="m-h2">載入順序</h2>
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">html</span></div>
-        <pre class="m-codeblock__pre"><span class="t-cmt">&lt;!-- 1. core.js 必須最先載入 --&gt;</span>
+        <pre class="m-codeblock__pre"><span class="t-cmt">&lt;!-- core.js 必須最先載入 --&gt;</span>
 &lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/core.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;
-
-<span class="t-cmt">&lt;!-- 2. 有用到 Slick 才需要這兩支 --&gt;</span>
-&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/jquery.min.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;
-&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/slick.min.js"</span>&gt;&lt;/<span class="t-kw">script</span>
     </div>
 </article>`,
 
@@ -179,7 +177,7 @@
 <article class="m-section">
     <span class="m-tag">core.js</span>
     <h1 class="m-h1">DOM 屬性擴充</h1>
-    <p class="m-lead">注入原生 <code class="m-code">HTMLElement</code> 與 jQuery 原型，提供額外的 DOM 判斷能力。</p>
+    <p class="m-lead">注入原生 <code class="m-code">HTMLElement</code> 與 jQuery 原型，提供額外的 DOM 判斷與動畫能力。</p>
 
     <h2 id="isSticky" class="m-h2">isSticky()</h2>
     <div class="m-signature">element.<span class="t-fn">isSticky</span>(): <span class="t-kw">boolean</span>
@@ -194,6 +192,59 @@ $element.<span class="t-fn">isSticky</span>(): <span class="t-kw">boolean</span>
 
 <span class="t-cmt">/* jQuery */</span>
 <span class="t-kw">if</span> (<span class="t-fn">jQuery</span>(<span class="t-str">'header'</span>).<span class="t-fn">isSticky</span>()) { <span class="t-cmt">/* 已釘住 */</span> }</pre>
+    </div>
+
+    <h2 id="slide" class="m-h2">slide()</h2>
+    <div class="m-signature">element.<span class="t-fn">slide</span>(<span class="t-prop">isOpen</span>: <span class="t-kw">boolean</span>, <span class="t-prop">options</span>?: <span class="t-kw">object</span>): <span class="t-kw">HTMLElement</span>
+$element.<span class="t-fn">slide</span>(<span class="t-prop">isOpen</span>: <span class="t-kw">boolean</span>, <span class="t-prop">options</span>?: <span class="t-kw">object</span>): <span class="t-kw">jQuery</span></div>
+    <p class="m-p">以 CSS transition 驅動元素的滑動展開或收合，同時動畫 <code class="m-code">height</code> 與 <code class="m-code">padding</code>，並正確處理 <code class="m-code">box-sizing: border-box</code>。若前一個動畫尚未結束，呼叫時會先凍結至當前位置再重新執行，避免高度計算錯誤。</p>
+
+    <table class="m-table">
+        <thead><tr><th>options 欄位</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+        <tbody>
+            <tr><td><code class="m-code">duration</code><span class="m-opt">選填</span></td><td><span class="m-type">number</span></td><td><code class="m-code">300</code></td><td>動畫時長（毫秒）。</td></tr>
+            <tr><td><code class="m-code">display</code><span class="m-opt">選填</span></td><td><span class="m-type">string</span></td><td><code class="m-code">'block'</code></td><td>展開時套用的 <code class="m-code">display</code> 值。</td></tr>
+            <tr><td><code class="m-code">callback</code><span class="m-opt">選填</span></td><td><span class="m-type">function</span></td><td>—</td><td>動畫結束後執行的回調。</td></tr>
+        </tbody>
+    </table>
+
+    <div class="m-codeblock">
+        <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
+        <pre class="m-codeblock__pre"><span class="t-kw">const</span> el = document.<span class="t-fn">querySelector</span>(<span class="t-str">'.j-drawer'</span>);
+
+<span class="t-cmt">/* 展開，預設 300ms */</span>
+el.<span class="t-fn">slide</span>(<span class="t-bool">true</span>);
+
+<span class="t-cmt">/* 收合，500ms，結束後執行 callback */</span>
+el.<span class="t-fn">slide</span>(<span class="t-bool">false</span>, {
+    duration: <span class="t-num">500</span>,
+    <span class="t-fn">callback</span>() { console.<span class="t-fn">log</span>(<span class="t-str">'收合完成'</span>); }
+});
+
+<span class="t-cmt">/* jQuery — 支援鏈式呼叫 */</span>
+<span class="t-fn">jQuery</span>(<span class="t-str">'.j-drawer'</span>).<span class="t-fn">slide</span>(<span class="t-bool">true</span>, { display: <span class="t-str">'flex'</span> }).<span class="t-fn">addClass</span>(<span class="t-str">'is-open'</span>);</pre>
+    </div>
+
+    <h2 id="slideStop" class="m-h2">slideStop()</h2>
+    <div class="m-signature">element.<span class="t-fn">slideStop</span>(): <span class="t-kw">HTMLElement</span>
+$element.<span class="t-fn">slideStop</span>(): <span class="t-kw">jQuery</span></div>
+    <p class="m-p">立即中止進行中的 <code class="m-code">slide()</code> 動畫，並凍結元素於當前高度。通常用於需要在動畫途中強制切換狀態的情境。一般情況下不需手動呼叫，<code class="m-code">slide()</code> 內部已自動處理重複呼叫的中止邏輯。</p>
+
+    <div class="m-codeblock">
+        <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
+        <pre class="m-codeblock__pre"><span class="t-kw">const</span> el = document.<span class="t-fn">querySelector</span>(<span class="t-str">'.j-drawer'</span>);
+
+el.<span class="t-fn">slide</span>(<span class="t-bool">true</span>, { duration: <span class="t-num">2000</span> });
+
+<span class="t-cmt">/* 動畫進行中強制停止 */</span>
+<span class="t-fn">setTimeout</span>(() => {
+    el.<span class="t-fn">slideStop</span>();
+}, <span class="t-num">500</span>);</pre>
+    </div>
+
+    <div class="m-callout m-callout--info">
+        <span class="m-callout__icon">ℹ</span>
+        <p><code class="m-code">slide()</code> 與 <code class="m-code">slideStop()</code> 均同時注入 <code class="m-code">HTMLElement.prototype</code> 與 <code class="m-code">jQuery.fn</code>，兩者回傳各自的物件以支援鏈式呼叫。若原型上已存在同名屬性，會觸發 <code class="m-code">devError</code> 並跳過注入。</p>
     </div>
 </article>`,
 
@@ -278,7 +329,7 @@ $element.<span class="t-fn">isSticky</span>(): <span class="t-kw">boolean</span>
     </div>
 
     <h2 id="escapeHTML" class="m-h2">escapeHTML()</h2>
-    <div class="m-signature"><span class="t-fn">escapeHTML</span>(<span class="t-prop">str</span>: <span class="t-kw">string</span>, <span class="t-prop">maxLength</span>?: <span class="t-kw">number</span> = <span class="t-num">5000</span>): <span class="t-kw">string</span></div>
+    <div class="m-signature"><span class="t-fn">escapeHTML</span>(<span class="t-prop">str</span>: <span class="t-kw">string</span>, <span class="t-prop">maxLength</span>?: <span class="t-kw">number</span> = <span class="t-num">1000</span>): <span class="t-kw">string</span></div>
     <p class="m-p">轉義 HTML 特殊字元，預防 XSS。超過 <code class="m-code">maxLength</code> 時拋出 Error。可轉義字元：<code class="m-code">&amp; &lt; &gt; " ' \`</code>。</p>
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>

@@ -73,6 +73,15 @@
             <tr><td><code class="m-code">media</code></td><td>切換時自動播放/暫停 video、audio、YouTube、Vimeo iframe。</td></tr>
         </tbody>
     </table>
+
+    <h2 class="m-h2">載入順序</h2>
+    <div class="m-codeblock">
+        <div class="m-codeblock__header"><span class="m-codeblock__lang">html</span></div>
+        <pre class="m-codeblock__pre">&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/core.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;
+&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/jquery.min.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;
+&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/lib/slick.min.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;
+&lt;<span class="t-kw">script</span> <span class="t-prop">src</span>=<span class="t-str">"assets/js/template/slick-plugin.js"</span>&gt;&lt;/<span class="t-kw">script</span>&gt;</pre>
+    </div>
 </article>`,
 
         'slick-init': `
