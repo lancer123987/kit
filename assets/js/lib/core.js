@@ -122,21 +122,32 @@ function clamp(min, num, max) {
         return (rect.top <= stickyTop + 10);
     };
 
+
     /* 注入原生 HTMLElement 原型 */
-    if ('undefined' !== typeof HTMLElement && !HTMLElement.prototype.isSticky) {
-        HTMLElement.prototype.isSticky = function () {
-            return checkStatus(this);
-        };
+    if ('undefined' !== typeof HTMLElement) {
+        if (HTMLElement.prototype.isSticky) {
+            /* 原生已存在錯誤訊息 */
+            devError('[isSticky] HTMLElement.prototype.isSticky already exists. Behavior may conflict with the custom implementation. Please verify compatibility and remove this injection manually.');
+        } else {
+            HTMLElement.prototype.isSticky = function () {
+                return checkStatus(this);
+            };
+        }
     }
 
     /* 注入 jQuery 插件原型 */
-    if ('undefined' !== typeof jQuery && !jQuery.fn.isSticky) {
-        jQuery.fn.isSticky = function () {
-            if (0 === this.length) {
-                return false;
-            }
-            return checkStatus(this[0]);
-        };
+    if ('undefined' !== typeof jQuery) {
+        if (jQuery.fn.isSticky) {
+            /* 原生已存在錯誤訊息 */
+            devError('[isSticky] jQuery.fn.isSticky already exists. Behavior may conflict with the custom implementation. Please verify compatibility and remove this injection manually.');
+        } else {
+            jQuery.fn.isSticky = function () {
+                if (0 === this.length) {
+                    return false;
+                }
+                return checkStatus(this[0]);
+            };
+        }
     }
 })();
 
@@ -166,7 +177,7 @@ function clamp(min, num, max) {
 
         let {
             duration = 300,
-            display  = 'block',
+            display = 'block',
             callback
         } = options || {};
 
@@ -178,48 +189,48 @@ function clamp(min, num, max) {
         function onEnd() {
             if (!isOpen) el.style.display = 'none';
 
-            el.style.transition    = '';
-            el.style.overflow      = '';
-            el.style.height        = '';
-            el.style.paddingTop    = '';
+            el.style.transition = '';
+            el.style.overflow = '';
+            el.style.height = '';
+            el.style.paddingTop = '';
             el.style.paddingBottom = '';
-            el._slideStop          = null;
+            el._slideStop = null;
 
             el.removeEventListener('transitionend', onEnd);
             if ('function' === typeof callback) callback();
         }
 
         el._slideStop = function () {
-            let cs                 = getComputedStyle(el);
-            el.style.height        = cs.height;
-            el.style.paddingTop    = cs.paddingTop;
+            let cs = getComputedStyle(el);
+            el.style.height = cs.height;
+            el.style.paddingTop = cs.paddingTop;
             el.style.paddingBottom = cs.paddingBottom;
-            el.style.transition    = '';
-            el.style.overflow      = '';
-            el._slideStop          = null;
+            el.style.transition = '';
+            el.style.overflow = '';
+            el._slideStop = null;
             el.removeEventListener('transitionend', onEnd);
         };
 
         el.addEventListener('transitionend', onEnd);
 
         if (isOpen) {
-            el.style.display  = display;
+            el.style.display = display;
             el.style.overflow = 'hidden';
 
-            let computedStyle       = getComputedStyle(el);
-            let targetPaddingTop    = computedStyle.paddingTop;
+            let computedStyle = getComputedStyle(el);
+            let targetPaddingTop = computedStyle.paddingTop;
             let targetPaddingBottom = computedStyle.paddingBottom;
-            let boxSizing           = computedStyle.boxSizing;
+            let boxSizing = computedStyle.boxSizing;
 
-            el.style.paddingTop    = '0';
+            el.style.paddingTop = '0';
             el.style.paddingBottom = '0';
-            el.style.height        = '0';
+            el.style.height = '0';
 
-            let naturalHeight   = el.scrollHeight;
-            let paddingTopPx    = parseFloat(targetPaddingTop)                || 0;
-            let paddingBottomPx = parseFloat(targetPaddingBottom)             || 0;
-            let borderTopPx     = parseFloat(computedStyle.borderTopWidth)    || 0;
-            let borderBottomPx  = parseFloat(computedStyle.borderBottomWidth) || 0;
+            let naturalHeight = el.scrollHeight;
+            let paddingTopPx = parseFloat(targetPaddingTop) || 0;
+            let paddingBottomPx = parseFloat(targetPaddingBottom) || 0;
+            let borderTopPx = parseFloat(computedStyle.borderTopWidth) || 0;
+            let borderBottomPx = parseFloat(computedStyle.borderBottomWidth) || 0;
 
             let targetHeight = ('border-box' === boxSizing)
                 ? naturalHeight + paddingTopPx + paddingBottomPx + borderTopPx + borderBottomPx
@@ -229,21 +240,21 @@ function clamp(min, num, max) {
 
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    el.style.height        = targetHeight + 'px';
-                    el.style.paddingTop    = targetPaddingTop;
+                    el.style.height = targetHeight + 'px';
+                    el.style.paddingTop = targetPaddingTop;
                     el.style.paddingBottom = targetPaddingBottom;
                 });
             });
 
         } else {
-            el.style.overflow   = 'hidden';
-            el.style.height     = el.scrollHeight + 'px';
+            el.style.overflow = 'hidden';
+            el.style.height = el.scrollHeight + 'px';
             el.style.transition = `height ${duration}ms ease, padding ${duration}ms ease`;
 
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    el.style.height        = '0';
-                    el.style.paddingTop    = '0';
+                    el.style.height = '0';
+                    el.style.paddingTop = '0';
                     el.style.paddingBottom = '0';
                 });
             });
@@ -252,7 +263,9 @@ function clamp(min, num, max) {
 
     /* 注入原生 HTMLElement 原型 */
     if ('undefined' !== typeof HTMLElement) {
-        if (!HTMLElement.prototype.slide) {
+        if (HTMLElement.prototype.slide) {
+            devError('[slide] HTMLElement.prototype.slide already exists. Behavior may conflict with the custom implementation. Please verify compatibility and remove this injection manually.');
+        } else {
             /**
              * @param     {boolean}   isOpen
              * @param     {object}    [options]
@@ -264,7 +277,9 @@ function clamp(min, num, max) {
             };
         }
 
-        if (!HTMLElement.prototype.slideStop) {
+        if (HTMLElement.prototype.slideStop) {
+            devError('[slide] HTMLElement.prototype.slideStop already exists. Behavior may conflict with the custom implementation. Please verify compatibility and remove this injection manually.');
+        } else {
             /**
              * @return    {HTMLElement}
              */
@@ -279,7 +294,9 @@ function clamp(min, num, max) {
 
     /* 注入 jQuery 插件原型 */
     if ('undefined' !== typeof jQuery) {
-        if (!jQuery.fn.slide) {
+        if (jQuery.fn.slide) {
+            devError('[slide] jQuery.fn.slide already exists. Behavior may conflict with the custom implementation. Please verify compatibility and remove this injection manually.');
+        } else {
             /**
              * @param     {boolean}   isOpen
              * @param     {object}    [options]
@@ -293,7 +310,9 @@ function clamp(min, num, max) {
             };
         }
 
-        if (!jQuery.fn.slideStop) {
+        if (jQuery.fn.slideStop) {
+            devError('[slide] jQuery.fn.slideStop already exists. Behavior may conflict with the custom implementation. Please verify compatibility and remove this injection manually.');
+        } else {
             /**
              * @return    {jQuery}
              */
@@ -1359,11 +1378,11 @@ const makeFetchPromise = (url, data) => {
             headers: isFormData ? {} : { 'Content-Type': 'application/json' },
             body: isFormData ? data : JSON.stringify(data)
         }).then((response) => {
-                if (!response.ok) {
-                    throw new Error('連線失敗');
-                }
-                return response.json();
-            })
+            if (!response.ok) {
+                throw new Error('連線失敗');
+            }
+            return response.json();
+        })
             .then((respon) => {
                 if (respon && respon.data) {
                     resolve(respon.data);
