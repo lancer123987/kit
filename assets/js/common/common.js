@@ -1,4 +1,4 @@
-jQuery(document).ready(function () {
+jQuery(function() {
     /* Passive event listeners */
     (() => {
         const passiveEvents = ['touchstart', 'touchmove', 'wheel', 'mousewheel'];
