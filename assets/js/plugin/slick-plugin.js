@@ -1,8 +1,8 @@
 /**
  * @description jQuery Slick 擴充外掛
- * @version     1.0.3
+ * @version     1.0.4
  * @author      Lancer
- * @updated     2026-02-21
+ * @updated     2026-06-09
  * @dependency  jQuery 3.5.1+, slick 1.9, core.js
  *
  */
@@ -13,7 +13,8 @@ const slickPlugin_SET = new Set([
     'customArrow',
     'progress',
     'media',
-    'dynamicShow'
+    'dynamicShow',
+    'mouseWheel'
 ]);
 
 /* slick 事件列表 */
@@ -78,7 +79,10 @@ jQuery.fn.initSlick = function (config = {}) {
             count: null,
             countZero: false,
             customArrow: null,
-            dynamicShow: null
+            progress: null,
+            dynamicShow: null,
+            mouseWheel: false,
+            mouseWheelIgnore: null
         }, plugin);
 
         /* 防呆機制：強制 slidesToShow >= slidesToScroll */
@@ -301,6 +305,7 @@ function executeMediaAction(target, action) {
         /* iframe --- */
         if ('iframe' === tag) {
             const src = $this.attr('src');
+            if(!src) return;
             const domain = getDomainName(src);
             if (!src || !domain) return true;
 
@@ -406,7 +411,8 @@ function slickPlugin($this, conf, active = []) {
             $this.data('slick-custom-btns', $btn);
 
             /* 綁定事件 */
-            $btn.off('click.slickExtend').on('click.slickExtend', function () {
+            $btn.off('click.slickExtend').on('click.slickExtend', function (e) {
+                e.preventDefault();
                 if ('prev' === jQuery(this).data('type')) {
                     $this.slick('slickPrev');
                 } else {
@@ -490,6 +496,50 @@ function slickPlugin($this, conf, active = []) {
             }).on('setPosition.slickExtend', (event, slick) => {
                 updateSlidesToShow(slick);
             });
+        },
+        /* 滑鼠滾輪切換（僅建議用於全螢幕 slider） */
+        mouseWheel: () => {
+            if (!conf.mouseWheel) return;
+            if ('ontouchend' in document) return;
+
+            let isLocked    = false;
+            let lockDuration = 600;
+
+            /* init 後取得實際動畫時長 */
+            $this.on('init.slickExtend', (event, slick) => {
+                lockDuration = slick.options.speed ?? 600;
+            });
+
+            /**
+             * wheel 事件處理器
+             *
+             * @param   {WheelEvent}  e
+             *
+             * @return  {void}
+             */
+            let wheelHandler = (e) => {
+                if (conf.mouseWheelIgnore && e.target.closest(conf.mouseWheelIgnore)) return;
+                e.preventDefault();
+
+                if (isLocked) return;
+
+                let direction = (0 < e.deltaY || 0 < e.deltaX) ? 'next' : 'prev';
+
+                isLocked = true;
+
+                if ('next' === direction) {
+                    $this.slick('slickNext');
+                } else {
+                    $this.slick('slickPrev');
+                }
+
+                setTimeout(() => {
+                    isLocked = false;
+                }, lockDuration);
+            };
+
+            $this[0].addEventListener('wheel', wheelHandler, { passive: false });
+            $this.data('slick-wheel-handler', wheelHandler);
         }
     };
 
@@ -519,6 +569,13 @@ jQuery.fn.destroySlick = function () {
             const $btn = $this.data('slick-custom-btns');
             if ($btn && $btn.length) {
                 $btn.off('.slickExtend');
+            }
+
+            /* 移除 mouseWheel 監聽 */
+            const wheelHandler = $this.data('slick-wheel-handler');
+            if (wheelHandler) {
+                $this[0].removeEventListener('wheel', wheelHandler);
+                $this.removeData('slick-wheel-handler');
             }
 
             /* 移除 slick 擴充事件 & 原生銷毀 */

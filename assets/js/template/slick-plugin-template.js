@@ -1,7 +1,7 @@
 /**========================================================================
  *
  * @description slick-plugin.js 說明書內容
- * @version     2.0.0
+ * @version     2.0.1
  * @dependency  manual-handle.js
  *
  * 新增項目：
@@ -33,11 +33,12 @@
             {
                 sub: 'Plugin',
                 links: [
-                    { id: 'slick-count',    anchor: '', label: 'count',        keywords: 'count 計數器 頁碼 補零 handleSlickCount total current' },
-                    { id: 'slick-arrow',    anchor: '', label: 'customArrow',  keywords: 'customArrow 箭頭 prev next disable hide handleCustomArrow' },
-                    { id: 'slick-progress', anchor: '', label: 'progress',     keywords: 'progress 進度條 autoplaySpeed CSS animation' },
-                    { id: 'slick-media',    anchor: '', label: 'media',        keywords: 'media video audio iframe youtube vimeo 媒體 播放 暫停 handleMedia' },
-                    { id: 'slick-dynamic',  anchor: '', label: 'dynamicShow',  keywords: 'dynamicShow 動態 slidesToShow 自動計算 寬度 itemSelector maxShow' }
+                    { id: 'slick-count',      anchor: '', label: 'count',        keywords: 'count 計數器 頁碼 補零 handleSlickCount total current' },
+                    { id: 'slick-arrow',      anchor: '', label: 'customArrow',  keywords: 'customArrow 箭頭 prev next disable hide handleCustomArrow' },
+                    { id: 'slick-progress',   anchor: '', label: 'progress',     keywords: 'progress 進度條 autoplaySpeed CSS animation' },
+                    { id: 'slick-media',      anchor: '', label: 'media',        keywords: 'media video audio iframe youtube vimeo 媒體 播放 暫停 handleMedia' },
+                    { id: 'slick-dynamic',    anchor: '', label: 'dynamicShow',  keywords: 'dynamicShow 動態 slidesToShow 自動計算 寬度 itemSelector maxShow' },
+                    { id: 'slick-mousewheel', anchor: '', label: 'mouseWheel',   keywords: 'mouseWheel 滑鼠滾輪 wheel 全螢幕 lockDuration mouseWheelIgnore' }
                 ]
             }
         ]
@@ -71,6 +72,8 @@
             <tr><td><code class="m-code">customArrow</code></td><td>自訂前後箭頭，自動處理 disable / hide 狀態。</td></tr>
             <tr><td><code class="m-code">progress</code></td><td>自動播放進度條 CSS 動畫控制。</td></tr>
             <tr><td><code class="m-code">media</code></td><td>切換時自動播放/暫停 video、audio、YouTube、Vimeo iframe。</td></tr>
+            <tr><td><code class="m-code">dynamicShow</code></td><td>依容器寬度與 item 實際寬度動態計算 <code class="m-code">slidesToShow</code>。</td></tr>
+            <tr><td><code class="m-code">mouseWheel</code></td><td>以滑鼠滾輪切換輪播，建議用於全螢幕 slider。</td></tr>
         </tbody>
     </table>
 
@@ -121,6 +124,8 @@
             <tr><td><code class="m-code">customArrow</code></td><td><span class="m-type">string | jQuery | null</span></td><td>自訂箭頭按鈕的選擇器或 jQuery 物件。需搭配 <code class="m-code">data-type="prev"</code>/<code class="m-code">"next"</code>。</td></tr>
             <tr><td><code class="m-code">progress</code></td><td><span class="m-type">string | jQuery | null</span></td><td>進度條 DOM 選擇器或 jQuery 物件。</td></tr>
             <tr><td><code class="m-code">dynamicShow</code></td><td><span class="m-type">object | null</span></td><td>依容器寬度自動計算 <code class="m-code">slidesToShow</code>。傳入設定物件啟用，詳見 Plugin: dynamicShow。</td></tr>
+            <tr><td><code class="m-code">mouseWheel</code></td><td><span class="m-type">boolean</span></td><td>啟用滑鼠滾輪切換。預設 <code class="m-code">false</code>。觸控裝置自動略過。</td></tr>
+            <tr><td><code class="m-code">mouseWheelIgnore</code></td><td><span class="m-type">string | null</span></td><td>CSS 選擇器，符合的子元素觸發 wheel 事件時不切換輪播。預設 <code class="m-code">null</code>。</td></tr>
         </tbody>
     </table>
 
@@ -185,6 +190,7 @@
 
     <div class="m-signature">$element.<span class="t-fn">destroySlick</span>(): <span class="t-kw">jQuery</span></div>
     <p class="m-p">只對已初始化（具有 <code class="m-code">.slick-initialized</code>）的元素執行銷毀；若元素尚未初始化則觸發 <code class="m-code">devWarn</code>。</p>
+    <p class="m-p">銷毀流程依序執行：移除自訂箭頭點擊監聽、移除 <code class="m-code">mouseWheel</code> 的 wheel 事件監聽、移除所有 <code class="m-code">.slickExtend</code> 命名空間事件、呼叫 Slick 原生 <code class="m-code">unslick</code>。</p>
 
     <div class="m-codeblock">
         <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
@@ -375,6 +381,47 @@
     <div class="m-callout m-callout--warn">
         <span class="m-callout__icon">⚠</span>
         <p>啟用 <code class="m-code">dynamicShow</code> 時，<code class="m-code">settings.slidesToShow</code> 仍需給定初始值（建議設為 <code class="m-code">1</code>），實際值會在 <code class="m-code">init</code> 後立即被覆寫。</p>
+    </div>
+</article>`,
+
+        'slick-mousewheel': `
+<article class="m-section">
+    <span class="m-tag">slick-plugin.js</span>
+    <h1 class="m-h1">Plugin: mouseWheel</h1>
+    <p class="m-lead">以滑鼠滾輪切換輪播。僅在非觸控裝置上生效（觸控裝置自動略過），適合用於全螢幕 slider。切換後會鎖定一段時間，防止滾輪連續觸發。</p>
+
+    <h2 class="m-h2">配置方式</h2>
+    <div class="m-codeblock">
+        <div class="m-codeblock__header"><span class="m-codeblock__lang">javascript</span></div>
+        <pre class="m-codeblock__pre">plugin: {
+    mouseWheel:       <span class="t-bool">true</span>,
+    mouseWheelIgnore: <span class="t-str">'.j-scroll-area'</span>  <span class="t-cmt">/* 選填：不觸發切換的子元素選擇器 */</span>
+}</pre>
+    </div>
+
+    <h3 class="m-h3">參數</h3>
+    <table class="m-table">
+        <thead><tr><th>參數</th><th>型別</th><th>預設</th><th>說明</th></tr></thead>
+        <tbody>
+            <tr><td><code class="m-code">mouseWheel</code></td><td><span class="m-type">boolean</span></td><td><code class="m-code">false</code></td><td>設為 <code class="m-code">true</code> 啟用。</td></tr>
+            <tr><td><code class="m-code">mouseWheelIgnore</code></td><td><span class="m-type">string | null</span></td><td><code class="m-code">null</code></td><td>CSS 選擇器，符合的子元素發出 wheel 事件時不切換輪播，適合內部有獨立捲動區塊的情況。</td></tr>
+        </tbody>
+    </table>
+
+    <h2 class="m-h2">行為說明</h2>
+    <table class="m-table">
+        <thead><tr><th>條件</th><th>行為</th></tr></thead>
+        <tbody>
+            <tr><td>觸控裝置（<code class="m-code">ontouchend in document</code>）</td><td>完全略過，不綁定任何監聽。</td></tr>
+            <tr><td><code class="m-code">deltaY &gt; 0</code> 或 <code class="m-code">deltaX &gt; 0</code></td><td>切換至下一張。</td></tr>
+            <tr><td>其他方向</td><td>切換至上一張。</td></tr>
+            <tr><td>切換後鎖定期間</td><td>忽略後續 wheel 事件，鎖定時長由 <code class="m-code">settings.speed</code> 決定（預設 600ms）。</td></tr>
+        </tbody>
+    </table>
+
+    <div class="m-callout m-callout--warn">
+        <span class="m-callout__icon">⚠</span>
+        <p>wheel 監聽以 <code class="m-code">{ passive: false }</code> 掛載，並呼叫 <code class="m-code">e.preventDefault()</code>，會阻止頁面正常捲動。建議僅在確定為全螢幕 slider 時啟用，否則請透過 <code class="m-code">mouseWheelIgnore</code> 排除需要捲動的子區域。</p>
     </div>
 </article>`
     };
