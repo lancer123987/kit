@@ -684,7 +684,7 @@ const ResizeHandler = (() => {
      *
      * @return    {void}
      */
-    const init = (customResizeEvent, { targetSelector = 'body', debounceDelay = delayDefault, direction = 'x' } = {}) => {
+    const init = (customResizeEvent, { targetSelector = 'html', debounceDelay = delayDefault, direction = 'x' } = {}) => {
         /* 防抖動功能是否存在 */
         if ('function' !== typeof debounce) {
             return devError('ResizeHandler: Required function "debounce" is missing.');
