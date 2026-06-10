@@ -669,7 +669,7 @@ function wrapjQuery(el) {
  */
 const ResizeHandler = (() => {
     /* 預設時間間隔 */
-    const delayDefault = 400;
+    let delayDefault = 400;
 
     /**
      * 初始化方法
@@ -682,7 +682,7 @@ const ResizeHandler = (() => {
      * @param     {number}    options.debounceDelay           防抖延遲時間
      * @param     {string}    options.direction               監控方向 ('x' | 'y' | 'both')
      *
-     * @return    {void}
+     * @return    {Object}    包含 destroy 方法的物件
      */
     const init = (customResizeEvent, { targetSelector = 'html', debounceDelay = delayDefault, direction = 'x' } = {}) => {
         /* 防抖動功能是否存在 */
@@ -693,9 +693,17 @@ const ResizeHandler = (() => {
         let targetEl = document.querySelector(targetSelector);
         if (!targetEl) return;
 
-        /* 紀錄最後一次觸發時的尺寸 */
-        let lastWidth = targetEl.offsetWidth;
-        let lastHeight = targetEl.offsetHeight;
+        /* 判斷是否為視窗等級的監控 (html 或 body) */
+        let isViewportTarget = 'html' === targetSelector || 'body' === targetSelector;
+        let watchX = 'x' === direction || 'both' === direction;
+        let watchY = 'y' === direction || 'both' === direction;
+
+        /* 明確初始化：viewport 等級用 innerWidth/innerHeight，一般元素用 offsetWidth/offsetHeight */
+        let lastWidth  = isViewportTarget ? window.innerWidth  : targetEl.offsetWidth;
+        let lastHeight = isViewportTarget ? window.innerHeight : targetEl.offsetHeight;
+
+        let resizeObserver      = null;
+        let windowResizeHandler = null;
 
         /* 包裝回調函式 */
         let debouncedCustomEvent = debounce(() => {
@@ -704,50 +712,88 @@ const ResizeHandler = (() => {
             }
         }, debounceDelay);
 
+        /**
+         * 比對尺寸是否改變，有變化則觸發回調
+         *
+         * @access    private
+         *
+         * @param     {number}  currentWidth    目前寬度
+         * @param     {number}  currentHeight   目前高度
+         *
+         * @return    {void}
+         */
+        const checkResize = (currentWidth, currentHeight) => {
+            let trigger = false;
+
+            if (watchX && currentWidth !== lastWidth) {
+                lastWidth = currentWidth;
+                trigger = true;
+            }
+
+            if (watchY && currentHeight !== lastHeight) {
+                lastHeight = currentHeight;
+                trigger = true;
+            }
+
+            if (trigger) {
+                debouncedCustomEvent();
+            }
+        };
+
+        /* 情況 A：viewport 等級且需要監控 Y 軸 → 使用 window resize
+         * body / html 高度由內容決定，ResizeObserver 對視窗高度變化無感
+         * direction: 'both' 時，X 軸也一併由 window resize 處理 */
+        if (isViewportTarget && watchY) {
+            windowResizeHandler = () => {
+                /* direction: 'y' 時傳入 lastWidth，確保 X 軸比對永遠不觸發 */
+                const currentW = watchX ? window.innerWidth : lastWidth;
+                checkResize(currentW, window.innerHeight);
+            };
+
+            window.addEventListener('resize', windowResizeHandler);
+        }
+
+        /* 情況 B：一般元素，或 viewport 元素「只監控 X 軸」→ 使用 ResizeObserver */
+        if (!isViewportTarget || (watchX && 'both' !== direction)) {
+            resizeObserver = new ResizeObserver((entries) => {
+                let entry = entries[0];
+                if (!entry) return;
+
+                let { width, height } = entry.contentRect;
+                checkResize(width, height);
+            });
+
+            resizeObserver.observe(targetEl);
+        }
+
         /* 初始觸發一次 */
         if ('function' === typeof customResizeEvent) {
             customResizeEvent();
         }
 
-        /* 建立 Observer */
-        let resizeObserver = new ResizeObserver((entries) => {
-            let entry = entries[0];
-            if (!entry) return;
+        return {
+            /**
+             * 移除所有監聽器
+             *
+             * @access    public
+             *
+             * @return    {void}
+             */
+            destroy() {
+                if (resizeObserver) {
+                    resizeObserver.disconnect();
+                    resizeObserver = null;
+                }
 
-            /* 取得目前尺寸 (浮點數精確度更高) */
-            let {
-                width: currentWidth,
-                height: currentHeight
-            } = entry.contentRect;
-            let trigger = false;
-
-            /* 方向判斷邏輯 */
-            switch (direction) {
-                case 'x':
-                    if (currentWidth !== lastWidth) trigger = true;
-                    break;
-                case 'y':
-                    if (currentHeight !== lastHeight) trigger = true;
-                    break;
-                case 'both':
-                default:
-                    if (currentWidth !== lastWidth || currentHeight !== lastHeight) trigger = true;
+                if (windowResizeHandler) {
+                    window.removeEventListener('resize', windowResizeHandler);
+                    windowResizeHandler = null;
+                }
             }
-
-            if (trigger) {
-                lastWidth = currentWidth;
-                lastHeight = currentHeight;
-                debouncedCustomEvent();
-            }
-        });
-
-        /* 開始監控 */
-        resizeObserver.observe(targetEl);
+        };
     };
 
-    return {
-        init
-    };
+    return { init };
 })();
 
 
