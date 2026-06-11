@@ -89,9 +89,10 @@
     <table class="m-table">
         <thead><tr><th>屬性</th><th>型別</th><th>說明</th></tr></thead>
         <tbody>
-            <tr><td><code class="m-code">name</code><span class="m-req">必填</span></td><td><span class="m-type">string</span></td><td>欄位的 <code class="m-code">name</code> 屬性值，用於產生 <code class="m-code">[name="..."]</code> 選擇器。</td></tr>
-            <tr><td><code class="m-code">errorKey</code><span class="m-req">必填</span></td><td><span class="m-type">string</span></td><td>驗證失敗時寫入 error 物件的 key 名稱。</td></tr>
-            <tr><td><code class="m-code">condition</code><span class="m-opt">選填</span></td><td><span class="m-type">function</span></td><td>回傳 <code class="m-code">false</code> 時跳過此欄位，用於條件式必填。</td></tr>
+            <tr><td><code class="m-code">name</code><span class="m-opt">選填</span></td><td><span class="m-type">string</span></td><td>欄位的 <code class="m-code">name</code> 屬性值，產生 <code class="m-code">[name="..."]</code> 選擇器。與 <code class="m-code">id</code> 擇一使用。</td></tr>
+        <tr><td><code class="m-code">id</code><span class="m-opt">選填</span></td><td><span class="m-type">string</span></td><td>欄位的 <code class="m-code">id</code> 屬性值，產生 <code class="m-code">#id</code> 選擇器。與 <code class="m-code">name</code> 擇一使用。</td></tr>
+        <tr><td><code class="m-code">errorKey</code><span class="m-req">必填</span></td><td><span class="m-type">string</span></td><td>驗證失敗時寫入 error 物件的 key 名稱。</td></tr>
+        <tr><td><code class="m-code">condition</code><span class="m-opt">選填</span></td><td><span class="m-type">function</span></td><td>回傳 <code class="m-code">false</code> 時跳過此欄位，用於條件式必填。</td></tr>
         </tbody>
     </table>
 

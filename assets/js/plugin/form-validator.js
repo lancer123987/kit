@@ -3,7 +3,8 @@
  * @param {{
  *   form: jQuery,
  *   fields: Array<{
- *     name: string,
+ *     name?: string,
+ *     id?: string,
  *     errorKey: string,
  *     condition: Function
  *   }>,
@@ -34,9 +35,9 @@ function validateFields(config) {
      * @returns {string}
      */
     function getValidatorKey($el) {
-        const tag = $el.prop('tagName').toLowerCase();
+        let tag = $el.prop('tagName').toLowerCase();
         if ('input' === tag) {
-            const type = ($el.attr('type') || 'text').toLowerCase();
+            let type = ($el.attr('type') || 'text').toLowerCase();
             return ('radio' === type || 'checkbox' === type) ? type : 'input';
         }
         return tag;
@@ -51,29 +52,29 @@ function validateFields(config) {
     function validateField($container, selector, errorKey, condition) {
         if (condition && !condition()) return;
 
-        const $el = $container.find(selector);
+        let $el = $container.find(selector);
         if (0 === $el.length) return;
 
-        const key = getValidatorKey($el.first());
+        let key = getValidatorKey($el.first());
 
         if (VALIDATOR[key] && VALIDATOR[key]($el)) {
             error[errorKey] = true;
         }
     }
 
-    const error = {};
+    let error = {};
 
-    config.fields.forEach(({ name, errorKey, condition }) => {
-        const selector = `[name="${name}"]`;
+    config.fields.forEach(({ name, id, errorKey, condition }) => {
+        let selector = id ? `#${id}` : `[name="${name}"]`;
         validateField(config.form, selector, errorKey, condition);
     });
 
     (config.groups || []).forEach(({ itemSelector, fields }) => {
         config.form.find(itemSelector).each(function (idx) {
-            const $item = jQuery(this);
-            const index = idx + 1;
+            let $item = jQuery(this);
+            let index = idx + 1;
             fields.forEach(({ namePrefix, errorKeyPrefix, condition }) => {
-                const selector = `[name^="${namePrefix}"]`;
+                let selector = `[name^="${namePrefix}"]`;
                 validateField($item, selector, errorKeyPrefix + index, condition);
             });
         });
