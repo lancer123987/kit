@@ -580,8 +580,6 @@ jQuery.fn.destroySlick = function () {
 
             /* 移除 slick 擴充事件 & 原生銷毀 */
             $this.off('.slickExtend').slick('unslick');
-        } else {
-            devWarn('[Slick Destroy] Target element is not a slick instance or already destroyed.');
         }
     });
 };
