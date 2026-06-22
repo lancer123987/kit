@@ -367,6 +367,25 @@ function fileUploadDelStyle($target) {
 
 
 /**
+ * 處理 Fetch 連線失敗的共用函式
+ *
+ * @access    public
+ *
+ * @param     {object}    error   錯誤物件
+ *
+ * @return    {void}
+ */
+function handleFetchError(error) {
+    dialog('clear');
+    setDialog('alert', {
+        title: '錯誤',
+        content: '暫時無法連線至伺服器，請檢查網路狀態或稍後再試。'
+    });
+    devError(error);
+}
+
+
+/**
  * 非同步資料請求
  *
  * @access    public
