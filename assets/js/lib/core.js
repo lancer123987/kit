@@ -1288,7 +1288,7 @@ function setDialog(type, setting = {}, callback1, callback2) {
         elContent.innerHTML = finalContent;
     }
 
-    /* 訊息框類型控制 (Sith Logic) */
+    /* 訊息框類型控制 */
     switch (type) {
         case 'confirm':
             if (btn1) btn1.style.display = 'flex';
