@@ -40,7 +40,7 @@ const escapeMap = new Map([
  */
 function devWarn(message) {
     if (isDevMode) {
-        console.error(new Error(message));
+        console.warn(new Error(message));
     }
 }
 
