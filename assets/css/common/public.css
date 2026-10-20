@@ -409,6 +409,14 @@ textarea {
     visibility: hidden;
 }
 
+/****隱藏大標****/
+.c-hide-title {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
 /****切換chechbox****/
 .c-toggleBox {
     position: fixed;
