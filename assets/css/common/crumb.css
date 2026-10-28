@@ -33,10 +33,6 @@
     transition: opacity .4s ease-in-out;
 }
 
-.crumb ol li a:hover {
-    opacity: .7;
-}
-
 /****針對圖片顯示階層處理樣式****/
 .crumb__pic span {
     position: absolute;
@@ -53,7 +49,11 @@
 
 
 /****非觸控螢幕****/
-@media (any-hover: hover) {}
+@media (any-hover: hover) {
+    .crumb ol li a:hover {
+        opacity: .7;
+    }
+}
 
 /****觸控螢幕****/
 @media (any-hover: none) {}

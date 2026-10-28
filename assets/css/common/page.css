@@ -44,7 +44,6 @@
     display: none;
 }
 
-.c-page__count a:hover,
 .c-page__count a.active {
     color: #fff;
     background: #111;
@@ -68,11 +67,6 @@
 
 .c-page__prev {
     margin: 0 30px 0 0;
-}
-
-.c-page__prev:hover,
-.c-page__next:hover {
-    opacity: .7;
 }
 
 /**頁碼箭頭**/
@@ -118,7 +112,17 @@
 
 
 /****非觸控螢幕****/
-@media (any-hover: hover) {}
+@media (any-hover: hover) {
+    .c-page__count a:hover {
+        color: #fff;
+        background: #111;
+    }
+
+    .c-page__prev:hover,
+    .c-page__next:hover {
+        opacity: .7;
+    }
+}
 
 /****觸控螢幕****/
 @media (any-hover: none) {}
