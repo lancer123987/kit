@@ -51,11 +51,6 @@
 }
 
 .slick-prev:hover,
-.slick-next:hover {
-    opacity: .7;
-}
-
-.slick-prev:hover,
 .slick-next:hover,
 .slick-prev:active,
 .slick-next:active,
@@ -224,3 +219,17 @@
         height: 20px;
     }
 }
+
+
+
+/****非觸控螢幕****/
+@media (any-hover: hover) {
+
+    .slick-prev:hover,
+    .slick-next:hover {
+        opacity: .7;
+    }
+}
+
+/****觸控螢幕****/
+@media (any-hover: none) {}
