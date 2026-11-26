@@ -165,7 +165,7 @@ textarea {
 select {
     padding: 5px 65px 5px 15px;
     border: 1px solid #d7d7d7;
-    background: url(../../images/common/icon_arrow_bottom.svg) right 20px/10px auto center no-repeat;
+    background: url(../../images/common/icon_arrow_bottom.svg) center right 20px/10px auto no-repeat;
 }
 
 select,
